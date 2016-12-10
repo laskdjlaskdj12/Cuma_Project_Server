@@ -1,0 +1,293 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		50DD99671DE818E00053B530 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99661DE818E00053B530 /* main.cpp */; };
+		50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD996D1DE818F30053B530 /* Cuma_socket.cpp */; };
+		50DD99721DE849D50053B530 /* Cuma_File_Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99701DE849D50053B530 /* Cuma_File_Block.cpp */; };
+		50DD99751DE849EB0053B530 /* Cuma_Dir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99731DE849EB0053B530 /* Cuma_Dir.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		50DD99611DE818E00053B530 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		50DD99631DE818E00053B530 /* Cuma_Server_Remake */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cuma_Server_Remake; sourceTree = BUILT_PRODUCTS_DIR; };
+		50DD99661DE818E00053B530 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		50DD996D1DE818F30053B530 /* Cuma_socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_socket.cpp; sourceTree = "<group>"; };
+		50DD996E1DE818F30053B530 /* Cuma_socket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_socket.hpp; sourceTree = "<group>"; };
+		50DD99701DE849D50053B530 /* Cuma_File_Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_File_Block.cpp; sourceTree = "<group>"; };
+		50DD99711DE849D50053B530 /* Cuma_File_Block.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_File_Block.hpp; sourceTree = "<group>"; };
+		50DD99731DE849EB0053B530 /* Cuma_Dir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Cuma_Dir.cpp; path = Cuma_Server_Remake/Cuma_Dir.cpp; sourceTree = "<group>"; };
+		50DD99741DE849EB0053B530 /* Cuma_Dir.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Cuma_Dir.hpp; path = Cuma_Server_Remake/Cuma_Dir.hpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		50DD99601DE818E00053B530 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		505C0F421DF2CF8700384903 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
+		50DD995A1DE818E00053B530 = {
+			isa = PBXGroup;
+			children = (
+				50DD99761DE84B250053B530 /* NO_USE */,
+				50DD99651DE818E00053B530 /* Cuma_Server_Remake */,
+				50DD99641DE818E00053B530 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		50DD99641DE818E00053B530 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				50DD99631DE818E00053B530 /* Cuma_Server_Remake */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		50DD99651DE818E00053B530 /* Cuma_Server_Remake */ = {
+			isa = PBXGroup;
+			children = (
+				50DD99661DE818E00053B530 /* main.cpp */,
+				50DD99701DE849D50053B530 /* Cuma_File_Block.cpp */,
+				50DD99711DE849D50053B530 /* Cuma_File_Block.hpp */,
+				50DD996D1DE818F30053B530 /* Cuma_socket.cpp */,
+				50DD996E1DE818F30053B530 /* Cuma_socket.hpp */,
+				505C0F421DF2CF8700384903 /* New Group */,
+			);
+			path = Cuma_Server_Remake;
+			sourceTree = "<group>";
+		};
+		50DD99761DE84B250053B530 /* NO_USE */ = {
+			isa = PBXGroup;
+			children = (
+				50DD99731DE849EB0053B530 /* Cuma_Dir.cpp */,
+				50DD99741DE849EB0053B530 /* Cuma_Dir.hpp */,
+			);
+			name = NO_USE;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		50DD99621DE818E00053B530 /* Cuma_Server_Remake */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 50DD996A1DE818E00053B530 /* Build configuration list for PBXNativeTarget "Cuma_Server_Remake" */;
+			buildPhases = (
+				50DD995F1DE818E00053B530 /* Sources */,
+				50DD99601DE818E00053B530 /* Frameworks */,
+				50DD99611DE818E00053B530 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Cuma_Server_Remake;
+			productName = Cuma_Server_Remake;
+			productReference = 50DD99631DE818E00053B530 /* Cuma_Server_Remake */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		50DD995B1DE818E00053B530 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = ace;
+				TargetAttributes = {
+					50DD99621DE818E00053B530 = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 2A9X84KH8Y;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 50DD995E1DE818E00053B530 /* Build configuration list for PBXProject "Cuma_Server_Remake" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 50DD995A1DE818E00053B530;
+			productRefGroup = 50DD99641DE818E00053B530 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				50DD99621DE818E00053B530 /* Cuma_Server_Remake */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		50DD995F1DE818E00053B530 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */,
+				50DD99751DE849EB0053B530 /* Cuma_Dir.cpp in Sources */,
+				50DD99721DE849D50053B530 /* Cuma_File_Block.cpp in Sources */,
+				50DD99671DE818E00053B530 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		50DD99681DE818E00053B530 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		50DD99691DE818E00053B530 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		50DD996B1DE818E00053B530 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer: laskdjlaskdj12@gmail.com (HLUR2R36H4)";
+				DEVELOPMENT_TEAM = 2A9X84KH8Y;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		50DD996C1DE818E00053B530 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer: laskdjlaskdj12@gmail.com (HLUR2R36H4)";
+				DEVELOPMENT_TEAM = 2A9X84KH8Y;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		50DD995E1DE818E00053B530 /* Build configuration list for PBXProject "Cuma_Server_Remake" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50DD99681DE818E00053B530 /* Debug */,
+				50DD99691DE818E00053B530 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		50DD996A1DE818E00053B530 /* Build configuration list for PBXNativeTarget "Cuma_Server_Remake" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50DD996B1DE818E00053B530 /* Debug */,
+				50DD996C1DE818E00053B530 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 50DD995B1DE818E00053B530 /* Project object */;
+}
