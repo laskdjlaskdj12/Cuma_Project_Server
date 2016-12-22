@@ -65,6 +65,9 @@
 
 #endif
 
+//시스템 에러 exception 리턴
+#include <system_error>
+
 using std::string;
 using std::list;
 using std::shared_ptr;
@@ -114,14 +117,20 @@ private:
 struct Cli_Sck_Info{
     
     Cli_Sck_Info():sck(0),srv_addr(0),prt(0){};
-    ~Cli_Sck_Info();
+    ~Cli_Sck_Info(){
+        sck = 0;
+        srv_addr = 0;
+        prt = 0;
+        siz = 0;
+    };
     
     
     //클라이언트 소켓 정보
-    int sck;
-    long srv_addr;
-    int prt;
-    std::shared_ptr<sockaddr_in> cli_sck_addr;
+    int sck;                    //소켓 디스크립터
+    long srv_addr;              //소켓 주소
+    int prt;                    //소켓 포트
+    sockaddr_in cli_sck_addr;   //소켓 sockaddr_in
+    int siz;                    //소켓 siz
 };
 
 
@@ -137,33 +146,43 @@ public:
     shared_ptr<Serv_Sck> get_Serv_Sock();  //서버 소켓 에 대한 정보
     
     //클라이언트가 connect 프로시저
-    void chk_con();
+    void cli_chk_con();
     
-    //클라이언트의 데이터 수신 프로시저
-    void rcv_cli_data();
     
-    //클라이언트 버퍼 큐
-    list<shared_ptr<Cli_Sck_Info>> get_rcv_buff();
+    //클라이언트 수신 이벤트 큐
+    list<shared_ptr<struct kevent>> get_cli_kqueue_lst();
+    list<shared_ptr<struct kevent>> get_cli_kqueue_lst_t();
+    
+    //클라이언트 kqueue
+    int get_cli_kqueue();
+    
+    //클라이언트 소켓 리스트
+    list<shared_ptr<Cli_Sck_Info>> get_cli_sck_lst();
+    
     
 private:
     
+    //서버 소켓에 대한 정보
+    shared_ptr<Serv_Sck> serv_sock;
     
-    shared_ptr<Serv_Sck> serv_sock;         //서버 소켓에 대한 정보
-    list<shared_ptr<Cli_Sck_Info>> Cli_Info;//클라이언트 소켓에 대한 정보
+    //클라이언트 접속 대한 정보
+    list<shared_ptr<Cli_Sck_Info>> Cli_Info_Lst;
     
     
     //서버 수신 이벤트 큐
-    shared_ptr<struct kevent> serv_kqueue;
+    struct kevent* serv_kqueue;      //이벤트 모니터링
+    struct kevent* serv_kqueue_t;    //이벤트 트리거
     int serv_kq;
     
     
     //클라이언트 수신 이벤트 큐
-    list<shared_ptr<struct kevent>> cli_kqueue;
+    list<shared_ptr<struct kevent>> cli_kqueue_lst;     //이벤트 모니터
+    list<shared_ptr<struct kevent>> cli_kqueue_lst_t;     //이벤트 트리거
     int cli_kq;
     
     
-    //클라이언트 버퍼 큐
-    list<shared_ptr<Cli_Sck_Info>> cli_buffer;
+    //클라이언트 소켓 버퍼 큐
+    list<shared_ptr<Cli_Sck_Info>> cli_lst;;
     
 };
 
