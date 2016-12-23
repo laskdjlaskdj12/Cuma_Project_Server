@@ -73,6 +73,10 @@ private:
     //클라이언트 메세지 버퍼
     shared_ptr<char> message;
     
+    
+    //클라이언트 kevent
+    shared_ptr<struct kevent> cli_keven;
+    
     //파일 이름
     std::string f_name;
     
@@ -125,8 +129,11 @@ public:
 private:
     
     //클라이언트가 파일 읽는 함수 : 뮤텍스를 사용
-    void r_binary(const std::string name);
+    std::string r_binary(const std::string name);
     
+    std::string write_binary(const std::string name,
+                             const std::string binary,
+                             const unsigned long byte);
     
     //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
     bool replay(shared_ptr<Client> cli);
@@ -163,6 +170,12 @@ private:
     shared_ptr<Cuma_Sck> cuma_sck;
     
     
+    //서버 소켓 정보
+    std::__1::shared_ptr<Serv_Sck> serv_sck;
+    
+    bool is_start;
+    
+    
 //========= 클라이언트 클래스 영역 ==============
     
     //접속된 클라이언트 obj 리스트
@@ -171,6 +184,9 @@ private:
     
     //클라이언트의 리스트 MAX 갯수
     int cli_max;
+    
+    //클라이언트 소켓 디스크립터 모음
+    std::list<shared_ptr<Cli_Sck_Info>> Cli_Info;
     
     
     //클라이언트의 데이터 수신 struct kevent

@@ -145,7 +145,6 @@ Cuma_Sck::Cuma_Sck(){
         serv_sock->set_sock(socket(PF_INET,SOCK_STREAM,0));
         serv_sock->set_addr("127.0.0.1");
         serv_sock->set_prt(33097);
-        serv_sock->set_prt(10);
         
         //서버 가동
         serv_sock->start_srv();
@@ -240,7 +239,7 @@ void Cuma_Sck::cli_chk_con(){
                     
                     //shared_ptr에 등록
                     shared_ptr<struct kevent> k_tmp(new struct kevent);
-                    
+                    shared_ptr<struct kevent> k_tmp_tri(new struct kevent);
                     
                     //kqueue 이벤트 큐에 등록
                     EV_SET(&*k_tmp,cli_tmp->sck , EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
@@ -248,7 +247,7 @@ void Cuma_Sck::cli_chk_con(){
                     
                     //클라이언트 이벤트 모니터에 push
                     cli_kqueue_lst.push_back(k_tmp);
-                    
+                    cli_kqueue_lst_t.push_back(k_tmp_tri);
                     
                     //클라이언트 소켓버퍼 큐에 추가
                     cli_lst.push_back(cli_tmp);
