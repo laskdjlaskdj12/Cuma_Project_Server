@@ -177,7 +177,7 @@ void Cuma_Sck::cli_chk_con(){
         listen(serv_sock->get_sck(), 128);
         
         
-        //서버 소켓 kqueue active
+        //클라이언트 소켓의 kqueue의 데이터가 input이 됬을경우
         while(serv_sock->is_start()){
             
             nev = kevent(serv_kq,
@@ -255,6 +255,10 @@ void Cuma_Sck::cli_chk_con(){
                     
                     //클라이언트 struct를 reset
                     cli_tmp.reset();
+                    
+                    //kevent temp구조체를 reset함
+                    k_tmp.reset();
+                    k_tmp_tri.reset();
                     
                     //컨티뉴
                     continue;

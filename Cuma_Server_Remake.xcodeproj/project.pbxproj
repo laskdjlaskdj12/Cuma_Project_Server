@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		503127071E0C1F4800AF11B7 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 503127061E0C1F4800AF11B7 /* jsoncpp.cpp */; };
+		503776A51E11956300818ECF /* Cuma_Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 503776A41E11956300818ECF /* Cuma_Client.cpp */; };
 		50A2BC4B1E01C620002DBD12 /* Cuma_Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */; };
 		50DD99671DE818E00053B530 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99661DE818E00053B530 /* main.cpp */; };
 		50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD996D1DE818F30053B530 /* Cuma_socket.cpp */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		503127061E0C1F4800AF11B7 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsoncpp.cpp; path = "../../../../xcode/jsoncpp-master/dist/jsoncpp.cpp"; sourceTree = "<group>"; };
+		503776A41E11956300818ECF /* Cuma_Client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_Client.cpp; sourceTree = "<group>"; };
 		50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_Server.cpp; sourceTree = "<group>"; };
 		50A2BC4A1E01C620002DBD12 /* Cuma_Server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_Server.hpp; sourceTree = "<group>"; };
 		50DD99631DE818E00053B530 /* Cuma_Server_Remake */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cuma_Server_Remake; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +54,9 @@
 		505C0F421DF2CF8700384903 /* Cuma_Server */ = {
 			isa = PBXGroup;
 			children = (
+				50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */,
+				50A2BC4A1E01C620002DBD12 /* Cuma_Server.hpp */,
+				503776A41E11956300818ECF /* Cuma_Client.cpp */,
 			);
 			name = Cuma_Server;
 			sourceTree = "<group>";
@@ -82,8 +87,6 @@
 				50DD996D1DE818F30053B530 /* Cuma_socket.cpp */,
 				50DD996E1DE818F30053B530 /* Cuma_socket.hpp */,
 				505C0F421DF2CF8700384903 /* Cuma_Server */,
-				50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */,
-				50A2BC4A1E01C620002DBD12 /* Cuma_Server.hpp */,
 			);
 			path = Cuma_Server_Remake;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503776A51E11956300818ECF /* Cuma_Client.cpp in Sources */,
 				50A2BC4B1E01C620002DBD12 /* Cuma_Server.cpp in Sources */,
 				50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */,
 				503127071E0C1F4800AF11B7 /* jsoncpp.cpp in Sources */,
