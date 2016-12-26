@@ -327,11 +327,11 @@ int Cuma_Server::w_binary(const shared_ptr<Client>& c)
 
 
 //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
-bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
+bool Cuma_Server::Start_Cli(shared_ptr<Client>& cli){
     try{
         
         //클라이언트에서 전송한 recv를 받음
-        rcv_json(cli);
+        rcv_val(cli);
         
         //val_tmp로 클라이언트로부터 수신을 받음
         Json::Value val_tmp = cli->get_json();
@@ -364,12 +364,25 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
                 }
                 break;
                 
-            default:
-                
+            default:    //파일모드가 잘못되었을시
+                throw "Wrong_MODE";
                 break;
         }
         
+        //val_tmp의 버퍼를 clear함
+        val_tmp.clear();
         
+        
+        //파일 이름, 크기, 바이너리 추가
+        val_tmp["File_name"] = cli->get_f_name();
+        val_tmp["File_binary"] = cli->get_file();
+        val_tmp["File_siz"] = (u_int64_t)cli->get_f_siz();
+        
+        //val_tmp를 전송함
+        snd_val(cli, val_tmp);
+        
+        //클라이언트 접속 connect 셧다운
+        Close_Cli(cli);
         
         return true;
         
@@ -389,7 +402,7 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         snd_val(cli,snd_err);
         
         //클라이언트 접속 connect 셧다운
-        shutdown(cli->get_cli_sck_info()->sck, SHUT_RDWR);
+        Close_Cli(cli);
         
         //false를 리턴함
         return false;
@@ -412,7 +425,7 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         snd_val(cli,snd_err);
         
         //클라이언트 접속 connect 셧다운
-        shutdown(cli->get_cli_sck_info()->sck, SHUT_RDWR);
+        Close_Cli(cli);
         
         
         //false를 리턴함
@@ -431,8 +444,9 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         //클라이언트로 전송
         snd_val(cli,snd_err);
         
-        //클라이언트 접속 connect 셧다운
-        shutdown(cli->get_cli_sck_info()->sck, SHUT_RDWR);
+        //클라이언트 접속 끊기
+        Close_Cli(cli);
+        
         
         
         //false를 리턴함
@@ -441,21 +455,55 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
 }
 
 
-//Client의 연결이 종료가 되었을때 연결종료를 해주는 함수
-void Cuma_Server::Close_Cli(shared_ptr<Client>& C){
+
+//Client의 연결이 종료가 되었을때 Client 커넥션 종료
+void Cuma_Server::Close_Cli(shared_ptr<Client>& c){
+    
+    
+    shutdown(c->get_cli_sck_info()->sck, SHUT_RDWR);
+    close(c->get_cli_sck_info()->sck);
     
 }
 
+
 //리시브할 함수
-void Cuma_Server::rcv_json(shared_ptr<Client>& c){
+void Cuma_Server::rcv_val(shared_ptr<Client>& c){
     try{
         
-        //클라이언트 전송 버퍼 siz를 먼저 recv
-        recv(c->get_cli_sck_info()->sck, c->get_f_, <#size_t#>, <#int#>))
-        send(des, j.c_str(), <#size_t#>, <#int#>);
+        unsigned long s;        //파일 크기
+        long t;                 //파일버퍼 템프
+        unsigned long t1;
+        char* f;                //파일 버퍼 temp
+        string s_t;             //버퍼 스트링 temp
         
-        //클라이언트의 전송 버퍼를 recv
-        recv(c->get_cli_sck_info()->sck,)
+        //클라이언트 전송 버퍼 siz를 먼저 recv
+        if(recv(c->get_cli_sck_info()->sck, &s , 8, 0) < 0){
+            throw errno;
+        }
+        
+        
+        f = new char[s];
+        
+        
+        //recv의 버퍼가 완전히 될때 까지 recv
+        while(t1 < s){
+            
+            
+            t = recv(c->get_cli_sck_info()->sck, f, s, 0);
+            
+            //만약 t가 0보다 작다면
+            if(t < 0){
+                throw errno;
+            }
+            
+            //크기를 증가시킴
+            t1 += t;
+            
+            s_t.append(f, t);
+        }
+        
+        
+        
     }catch(std::exception& e){
         
     }catch(Json::Exception& e){

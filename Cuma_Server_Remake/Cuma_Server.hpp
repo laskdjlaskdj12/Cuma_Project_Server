@@ -64,6 +64,9 @@ public:
     virtual void set_file(const string s);
     virtual string get_file();
 
+    //파일 사이즈 등록
+    virtual void set_f_siz(unsigned long s);
+    unsigned long get_f_siz();
     
     //클라이언트 소켓 info를 등록
     virtual shared_ptr<Cli_Sck_Info> get_cli_sck_info();
@@ -88,9 +91,6 @@ public:
     virtual shared_ptr < struct kevent> get_kevent();
     virtual void set_kevent(shared_ptr<struct kevent> e);
     
-    //파일 사이즈 등록
-    virtual void set_f_siz(unsigned long s);
-    unsigned long get_f_siz();
     //시작했는지 뮤텍스 측정
     bool is_start();
     
@@ -184,7 +184,7 @@ private:
     
     
     //수신 함수
-    void rcv_json(shared_ptr<Client>&c);
+    void rcv_val(shared_ptr<Client>&c);
     
     //보낼 함수
     void snd_val(shared_ptr<Client>&c,
@@ -195,7 +195,7 @@ private:
     
 public:
     //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
-    bool Start_Cli(shared_ptr<Client> cli);
+    bool Start_Cli(shared_ptr<Client>& cli);
     
 private:
     //Client의 연결이 종료가 되었을때 연결 종료를 해주는 함수

@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "108"
             endingLineNumber = "108"
-            landmarkName = "Cuma_Server::Cuma_Server()"
+            landmarkName = "Cuma_Server::start()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "137"
             endingLineNumber = "137"
-            landmarkName = "Cuma_Server::Cuma_Server()"
+            landmarkName = "Cuma_Server::start()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -63,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "371"
             endingLineNumber = "371"
-            landmarkName = "Cuma_Server::w_binary(const shared_ptr&lt;Client&gt;&amp; c)"
+            landmarkName = "Cuma_Server::Start_Cli(shared_ptr&lt;Client&gt;&amp; cli)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

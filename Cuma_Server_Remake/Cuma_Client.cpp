@@ -75,9 +75,12 @@ void Client::set_f_name(std::string nam){
 Json::Value Client::get_json( ){
     return J_val;
 }
+
+
 void Client::set_json(Json::Value j_val){
     J_val = j_val;
 }
+
 
 //struct kevent를 등록
 shared_ptr < struct kevent> Client::get_kevent(){
