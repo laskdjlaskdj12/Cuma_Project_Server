@@ -63,17 +63,15 @@ void Cuma_Server::start(){
         //먼저 서버가 active를 true로 시킴
         is_start = true;
         
-        //Cuma_Sck의 chkconnect를 시작후 클라이언트의 input이 들어오면
+        //서버 소켓의 chkconnect를 시작후 클라이언트의 input이 들어오면
         cuma_sck->cli_chk_con();
         
-        
-        //kqueue에 대한 정보를 받아서 클라이언트 소켓 버퍼 큐에 대해 읽음
         
         //만약 is_start가 false가 될때까지
         while(is_start){
             
             //여기에서 list<shared_ptr<Client>>는 temp list로 connect된 클라이언트들을 리스트 작성함
-            
+           // S_cli_kq =
             
             
             //Cli_Sck_Info의 iterator 로 Cli_Info의 값들을 넣음
@@ -167,7 +165,7 @@ void Cuma_Server::start(){
                         EV_SET(&(&*k_tri)[i], (*c_list_it)->get_cli_sck_info()->sck ,EVFILT_READ , EV_DELETE, NULL, NULL, NULL);
                         
                         
-                        //break;로 탈출
+                        //break 로 탈출
                         break;
                         
                     }
@@ -203,7 +201,7 @@ void Cuma_Server::start(){
                 }
             }
         }
-        
+
         
         
     }catch(std::exception& e){
@@ -216,6 +214,12 @@ void Cuma_Server::start(){
 
 //Cuma_server로 stop
 void Cuma_Server::stop(){
+    
+    //is_start를 false로 함
+    is_start = false;
+    
+    cuma_sck->stop();
+    
     
 }
 
@@ -470,25 +474,29 @@ void Cuma_Server::Close_Cli(shared_ptr<Client>& c){
 void Cuma_Server::rcv_val(shared_ptr<Client>& c){
     try{
         
+        //변수들
         unsigned long s;        //파일 크기
         long t;                 //파일버퍼 템프
         unsigned long t1;
         char* f;                //파일 버퍼 temp
         string s_t;             //버퍼 스트링 temp
+        Json::Value rcv_f;
+        
+        
         
         //클라이언트 전송 버퍼 siz를 먼저 recv
         if(recv(c->get_cli_sck_info()->sck, &s , 8, 0) < 0){
             throw errno;
         }
         
-        
+        //리시브 버퍼 temp를 생성
         f = new char[s];
         
         
         //recv의 버퍼가 완전히 될때 까지 recv
         while(t1 < s){
             
-            
+            //파일 버퍼를 수신
             t = recv(c->get_cli_sck_info()->sck, f, s, 0);
             
             //만약 t가 0보다 작다면
@@ -499,15 +507,29 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
             //크기를 증가시킴
             t1 += t;
             
+            //append를 함
             s_t.append(f, t);
         }
         
+        //수신받은 temp를 json으로 세팅함
+         rcv_f = c->cha_to_str(s_t);
         
+        //json을 클라이언트로 등록
+        c->set_json(rcv_f);
+        
+        //f를 딜리트
+        delete[] f;
+        
+        
+        //리턴
+        return;
         
     }catch(std::exception& e){
-        
+        std::cout<<"[Error] : "<<e.what()<<std::endl;
+        return;
     }catch(Json::Exception& e){
-        
+        std::cout<<"[Error] : "<<e.what()<<std::endl;
+        return;
     }
     
 }
@@ -516,5 +538,13 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
 void Cuma_Server::snd_val(shared_ptr<Client>&c,
                           Json::Value& j){
     
+    string temp = writ.write(j);
+    unsigned long siz = temp.size();
+    
+    //사이즈 전송
+    send(c->get_cli_sck_info()->sck, &siz, sizeof(unsigned long), 0);
+    
+    //버퍼 전송
+    send(c->get_cli_sck_info()->sck, temp.c_str(), siz,0);
+    
 }
-

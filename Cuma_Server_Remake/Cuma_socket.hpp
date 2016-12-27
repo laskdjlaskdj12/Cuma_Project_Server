@@ -135,7 +135,7 @@ struct Cli_Sck_Info{
 
 
 
-//Serv_Sck의 기능들에 추가하여 담당을 함
+//Serv_Sck의 기능들중 클라이언트 접속시 kevent로 클라이언트 큐에 넣는다.
 class Cuma_Sck{
 public:
     Cuma_Sck();
@@ -158,6 +158,9 @@ public:
     
     //클라이언트 소켓 리스트
     list<shared_ptr<Cli_Sck_Info>> get_cli_sck_lst();
+    
+    //Cuma_Sck 셧다운
+    void stop();
     
     
 private:

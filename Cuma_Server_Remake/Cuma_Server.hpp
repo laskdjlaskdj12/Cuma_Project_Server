@@ -122,9 +122,6 @@ private:
     
 //========= JSON 영역 ===============
     
-    //json 스트링 버퍼
-    std::string J_str;
-    
     //json 값
     Json::Value J_val;
     
@@ -235,9 +232,12 @@ private:
     
     
     //서버 소켓 정보
-    std::__1::shared_ptr<Serv_Sck> serv_sck;
+    std::shared_ptr<Serv_Sck> serv_sck;
     
     bool is_start;
+    
+    //Cuma_sck의 쓰레드
+    std::thread Cuma_sck_thr;
     
     
 //========= 클라이언트 클래스 영역 ==============

@@ -104,4 +104,3 @@ void Client::set_f_siz(unsigned long s){
 unsigned long Client::get_f_siz(){
     return f_siz;
 }
-

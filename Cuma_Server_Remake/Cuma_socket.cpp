@@ -92,7 +92,7 @@ void Serv_Sck::restrt_srv(){
     
 }
 
-// 서버 종료
+// 서버 소켓 디스크립터 종료
 void Serv_Sck::exit_serv(){
     if(active == true){
         shutdown(srv_sock,SHUT_RDWR);
@@ -301,6 +301,16 @@ int Cuma_Sck::get_cli_kqueue(){
 list<shared_ptr<Cli_Sck_Info>> Cuma_Sck::get_cli_sck_lst(){
     return cli_lst;
 }
+
+
+//Cuma_Sck 종료 클라이언트 소켓 디스크립터에게 shutdown 통보
+void Cuma_Sck::stop(){
+    
+    serv_sock->
+    for(Cli_Info_Lst)
+    
+}
+
 
 Cuma_Sck::~Cuma_Sck(){
     
