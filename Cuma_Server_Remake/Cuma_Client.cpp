@@ -24,7 +24,8 @@ Client::~Client(){
     cli_sck.reset();
     mess.reset();
     J_val.clear();
-    f_buf.reset();
+    f_buf.clear();
+    start = false;
 }
 
 
@@ -41,6 +42,29 @@ string Client::cha_to_str(const Json::Value j){
     return J_w.write(j);
 }
 
+//Client를 stop함
+void Client::stop(){
+    
+}
+
+//파일 바이너리 세팅
+void Client::set_file(const string s){
+    f_buf = s;
+}
+
+
+string Client::get_file(){
+    return f_buf;
+}
+
+
+//파일 사이즈 설정
+void Client::set_f_siz(unsigned long s){
+    f_siz = s;
+}
+long Client::get_f_siz(){
+    return f_siz;
+}
 
 
 
@@ -53,6 +77,7 @@ void Client::set_cli_sck_info(shared_ptr<Cli_Sck_Info> p){
 }
 
 
+
 //메세지를 등록
 shared_ptr<char> Client::get_message(){
     return mess;
@@ -60,6 +85,7 @@ shared_ptr<char> Client::get_message(){
 void Client::set_message(shared_ptr<char> m){
     mess = m;
 }
+
 
 
 //이름을 등록
@@ -97,10 +123,3 @@ bool Client::is_start(){
     return start;
 }
 
-//파일 사이즈 설정
-void Client::set_f_siz(unsigned long s){
-    f_siz = s;
-}
-unsigned long Client::get_f_siz(){
-    return f_siz;
-}

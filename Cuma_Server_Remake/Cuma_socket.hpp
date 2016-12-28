@@ -145,19 +145,11 @@ public:
     //프로퍼티
     shared_ptr<Serv_Sck> get_Serv_Sock();  //서버 소켓 에 대한 정보
     
-    //클라이언트가 connect 프로시저
-    void cli_chk_con();
     
-    
-    //클라이언트 수신 이벤트 큐
-    list<shared_ptr<struct kevent>> get_cli_kqueue_lst();
-    list<shared_ptr<struct kevent>> get_cli_kqueue_lst_t();
-    
-    //클라이언트 kqueue
-    int get_cli_kqueue();
-    
-    //클라이언트 소켓 리스트
-    list<shared_ptr<Cli_Sck_Info>> get_cli_sck_lst();
+    //서버 클라이언트 listen kevent 구조체 리턴
+    shared_ptr<struct kevent> get_serv_kqueue();
+    shared_ptr<struct kevent> get_serv_kqueue_t();
+    int get_serv_kq();
     
     //Cuma_Sck 셧다운
     void stop();
@@ -168,24 +160,11 @@ private:
     //서버 소켓에 대한 정보
     shared_ptr<Serv_Sck> serv_sock;
     
-    //클라이언트 접속 대한 정보
-    list<shared_ptr<Cli_Sck_Info>> Cli_Info_Lst;
-    
     
     //서버 수신 이벤트 큐
-    struct kevent* serv_kqueue;      //이벤트 모니터링
-    struct kevent* serv_kqueue_t;    //이벤트 트리거
+    shared_ptr<struct kevent> serv_kqueue;      //이벤트 모니터링
+    shared_ptr<struct kevent> serv_kqueue_t;    //이벤트 트리거
     int serv_kq;
-    
-    
-    //클라이언트 수신 이벤트 큐
-    list<shared_ptr<struct kevent>> cli_kqueue_lst;     //이벤트 모니터
-    list<shared_ptr<struct kevent>> cli_kqueue_lst_t;     //이벤트 트리거
-    int cli_kq;
-    
-    
-    //클라이언트 소켓 버퍼 큐
-    list<shared_ptr<Cli_Sck_Info>> cli_lst;;
     
 };
 

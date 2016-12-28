@@ -33,18 +33,12 @@ Cuma_Server::Cuma_Server(){
     thr_pth = std::thread::hardware_concurrency();
     
     
-    //서버 소켓 정보 받기
-    serv_sck = cuma_sck->get_Serv_Sock();
     
     
-    //client struct kevent 정보를 받음
-    CS_cli_kqueue_lst = cuma_sck->get_cli_kqueue_lst();
-    CS_cli_kqueue_lst_t = cuma_sck->get_cli_kqueue_lst_t();
-    S_cli_kq = cuma_sck->get_cli_kqueue();
-    
-    
-    //클라이언트 소켓 info 구조체 포인터 전달
-    Cli_Info = cuma_sck->get_cli_sck_lst();
+    //cuma_sck의 kevent struct와 kevent 가지고 오기
+    CS_srv_kevent = cuma_sck->get_serv_kqueue();
+    CS_srv_kevent_t = cuma_sck->get_serv_kqueue_t();
+    S_srv_kq = cuma_sck->get_serv_kq();
     
     
     
@@ -57,152 +51,99 @@ Cuma_Server::~Cuma_Server(){
 }
 
 
-//서버의 listen 상태로 설정후
+//서버의 listen 상태를 설정후 listen된 클라이언트들은 Start_cli로 보냄
 void Cuma_Server::start(){
     try{
-        //먼저 서버가 active를 true로 시킴
-        is_start = true;
+        // 클라이언트 소켓의 kqueue의 리턴값을 저장할 temp를 만듬
+        int nev;
         
-        //서버 소켓의 chkconnect를 시작후 클라이언트의 input이 들어오면
-        cuma_sck->cli_chk_con();
+        //서버소켓에 kqueue를 등록
+        EV_SET((&*CS_srv_kevent), (&*cuma_sck->get_Serv_Sock())->get_sck(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
         
+        listen(cuma_sck->get_Serv_Sock()->get_sck(),128);
         
-        //만약 is_start가 false가 될때까지
         while(is_start){
-            
-            //여기에서 list<shared_ptr<Client>>는 temp list로 connect된 클라이언트들을 리스트 작성함
-           // S_cli_kq =
-            
-            
-            //Cli_Sck_Info의 iterator 로 Cli_Info의 값들을 넣음
-            for(std::list<shared_ptr<Cli_Sck_Info>>::iterator iter = Cli_Info.begin();
-                iter != Cli_Info.end();
-                iter++){
-                
-                //Client의 tmp를 만듬
-                shared_ptr<Client> c_tmp = std::shared_ptr<Client>(new Client);
-                
-                //c_list에 Cli_sck_Info 프로퍼티를 세팅
-                c_tmp->set_cli_sck_info(*iter);
-                
-                //c_list에 push
-                c_list.push_back(c_tmp);
-                
-                //c_tmp에 리셋
-                c_tmp.reset();
-            }
+            nev = kevent(S_srv_kq,
+                         (&* CS_srv_kevent), 1,
+                         (&* CS_srv_kevent_t), 1,
+                         NULL);
             
             
             
             
-            //c의 크기는 Cli_Info의 리스트에 들어있는 원소들의 갯수로 함
-            
-            //kevent 모니터 구조체
-            shared_ptr<struct kevent> k_mon = std::shared_ptr<struct kevent>(new struct kevent[Cli_Info.size()]);
-            
-            
-            //kevent 트리거 구조체
-            shared_ptr<struct kevent> k_tri = std::shared_ptr<struct kevent>(new struct kevent[Cli_Info.size()]);
-            
-            
-            //Client 배열의 인덱스 설정
-            int keve_idx = 0;
-            
-            
-            //모니터할 클라이언트의 kevent를 Client객체에 넣음
-            for(std::list<shared_ptr<struct kevent>>::iterator iter = CS_cli_kqueue_lst.begin();
-                iter != CS_cli_kqueue_lst.end();
-                iter++){
-                
-                
-                //kevent를 등록
-                (&*k_mon)[keve_idx] = *(*iter);
-                
-                
-                //인덱스 추가
-                keve_idx++;
-                
-                
-                //iter 가 참조한 CS_cli_kqueue_lst의 shared_ptr를 소멸함
-                iter->reset();
-            }
-            
-            
-            
-            
-            //kevent를 통해 nev를 형성
-            int nev = kevent(S_cli_kq,
-                             &*k_mon,
-                             keve_idx,
-                             &*k_tri,
-                             keve_idx,
-                             NULL);
-            
-            
-            
-            
-            //만약 kevent의 에러가 발생했을 경우
+            //nev 가 에러일때
             if(nev < 0){
-                std::cout<<"[Info] : nev is fail"<<std::endl;
                 throw errno;
-            }else{
-                for(int i = 0; i < keve_idx; i++){
-                    
-                    //클라이언트 디스크립터중 read_buffer가 왔을시에
-                    auto c_list_itel = c_list.begin();
-                    std::advance(c_list_itel, i);
-                    
-                    //만약 클라이언트가 shutdown이 됬을경우
-                    if( ( &*k_tri )[i].flags & EV_EOF){
-                        
-                        //iterator로 c_list 리스트의 Client 인덱스 검색
-                        auto c_list_it = c_list.begin();
-                        std::advance(c_list_it, i);
-                        
-                        Close_Cli((*c_list_it));
-                        
-                        //해당 클라이언트의 디스크립터를 disable함
-                        EV_SET(&(&*k_tri)[i], (*c_list_it)->get_cli_sck_info()->sck ,EVFILT_READ , EV_DELETE, NULL, NULL, NULL);
-                        
-                        
-                        //break 로 탈출
-                        break;
-                        
-                    }
-                    
-                    
-                    //클라이언트가 EV_ERROR를 리턴했을시에
-                    else if( ( &*k_tri )[i].flags & EV_ERROR){
-                        std::cout<<"[Info : Client temp_trig_keven[i] is error"<<std::endl;
-                        throw errno;
-                    }
-                    
-                    //클라이언트 디스크립터 에 read buffer가 왔을시
-                    else if((&*k_tri)[i].ident == (*c_list_itel)->get_cli_sck_info()->sck){
-                        
-                        //만약 쓰레드에 할당이 되었을 경우
-                        if((*c_list_itel)->is_start() == true){
-                            
-                            //continue로 넘어감
-                            continue;
-                            
-                            
-                            //만약 아닐 경우
-                        }else{
-                            
-                            //쓰레드를 replay()를 할당함
-                            std::thread start(&Cuma_Server::Start_Cli, this, (*c_list_itel));
-                            
-                            //쓰레드를 리스트에 넣고 joinable로 관찰을 함
-                            t_list.push_back(start);
-                        }
-                        
-                    }
+            }
+            
+            
+            else{
+                
+                //상대 소켓이 셧다운이 됬을경우
+                if(CS_srv_kevent_t->flags & EV_EOF){
+                    std::cout<<"[Error] : Socket is shutdown"<<std::endl;
+                    break;
                 }
+                
+                //서버 소켓을 트리거 했을경우에
+                else if(CS_srv_kevent_t->ident == cuma_sck->get_Serv_Sock()->get_sck()){
+                    
+                    
+                    
+                    //클라이언트 구조체 할당
+                    shared_ptr<Cli_Sck_Info> cli_tmp (new Cli_Sck_Info);
+                    shared_ptr<Client> Client_temp  (new Client);
+                    
+                    
+                    //accept 시킴
+                    cli_tmp->sck = accept(cuma_sck->get_Serv_Sock()->get_sck(),
+                                          (sockaddr*)&cli_tmp->cli_sck_addr,
+                                          (socklen_t*)&cli_tmp->siz);
+                    
+                    
+                    //만약 128개의 사이즈가 넘었다면 큐 부족으로 connect false리턴
+                    if(c_list.size() < 128){
+                        
+                        //큐가 없다고 클라이언트에게 전송
+                        send(cli_tmp->sck, "NO_SPACE_QUEUE", sizeof("NO_SPACE_QUEUE"), 0);
+                        
+                        
+                        //접속한 클라이언트 연결 종료
+                        shutdown(cli_tmp->sck, SHUT_RDWR);
+                        
+                        //cli_tmp 디스크립터 close
+                        close(cli_tmp->sck);
+                        
+                        
+                        //커넥션을 shutdown 후 클라이언트 struct를 reset
+                        cli_tmp.reset();
+                        continue;
+                    }
+                    
+                    
+                    //cli_sck_info를 Client의 파라미터로 인식
+                    Client_temp->set_cli_sck_info(cli_tmp);
+                    
+                    
+                    //쓰레드 생성
+                    std::thread Cli_proc(&Cuma_Server::Start_Cli, this, Client_temp);
+                    
+                
+                    
+                    //cli_tmp와 Client_temp의 index를 reset
+                    cli_tmp.reset();
+                    Client_temp.reset();
+                    
+                    
+                    //컨티뉴
+                    continue;
+                }
+                
             }
         }
-
         
+        //만약 is_start 가 false가 되었을 경우 cuma_sck->get_Serv_Sock()의 stop으로 넘어감
+        stop();
         
     }catch(std::exception& e){
         std::cout<<"[Error] : Error res"<<e.what()<<std::endl;
@@ -211,6 +152,7 @@ void Cuma_Server::start(){
         return;
     }
 }
+
 
 //Cuma_server로 stop
 void Cuma_Server::stop(){
@@ -331,7 +273,7 @@ int Cuma_Server::w_binary(const shared_ptr<Client>& c)
 
 
 //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
-bool Cuma_Server::Start_Cli(shared_ptr<Client>& cli){
+bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
     try{
         
         //클라이언트에서 전송한 recv를 받음
@@ -463,9 +405,8 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client>& cli){
 //Client의 연결이 종료가 되었을때 Client 커넥션 종료
 void Cuma_Server::Close_Cli(shared_ptr<Client>& c){
     
-    
-    shutdown(c->get_cli_sck_info()->sck, SHUT_RDWR);
-    close(c->get_cli_sck_info()->sck);
+    //해당 소켓 디스크립터를 shutdown함
+    c->stop();
     
 }
 
@@ -519,7 +460,6 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
         
         //f를 딜리트
         delete[] f;
-        
         
         //리턴
         return;

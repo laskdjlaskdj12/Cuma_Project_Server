@@ -58,38 +58,44 @@ public:
     string cha_to_str(const Json::Value j);
     
     
+    //Client
+    void stop();
+    
+    
     //================ 프로퍼티 =========================
     
     //파일 이름 세팅
-    virtual void set_file(const string s);
-    virtual string get_file();
+     void set_file(const string s);
+     string get_file();
 
     //파일 사이즈 등록
-    virtual void set_f_siz(unsigned long s);
-    unsigned long get_f_siz();
+     void set_f_siz(unsigned long s);
+     long get_f_siz();
     
     //클라이언트 소켓 info를 등록
-    virtual shared_ptr<Cli_Sck_Info> get_cli_sck_info();
-    virtual void set_cli_sck_info(shared_ptr<Cli_Sck_Info> p);
+     shared_ptr<Cli_Sck_Info> get_cli_sck_info();
+     void set_cli_sck_info(shared_ptr<Cli_Sck_Info> p);
     
     
     //메세지를 등록
-    virtual shared_ptr<char> get_message();
-    virtual void set_message(shared_ptr<char> mess);
+     shared_ptr<char> get_message();
+     void set_message(shared_ptr<char> mess);
     
     
     //이름을 등록
-    virtual std::string get_f_name();
-    virtual void set_f_name(std::string nam);
+     std::string get_f_name();
+     void set_f_name(std::string nam);
     
     
     //json을 등록
-    virtual Json::Value get_json( );
-    virtual void set_json(Json::Value j_val);
+     Json::Value get_json( );
+     void set_json(Json::Value j_val);
+    
     
     //struct kevent를 등록
-    virtual shared_ptr < struct kevent> get_kevent();
-    virtual void set_kevent(shared_ptr<struct kevent> e);
+     shared_ptr < struct kevent> get_kevent();
+     void set_kevent(shared_ptr<struct kevent> e);
+    
     
     //시작했는지 뮤텍스 측정
     bool is_start();
@@ -115,7 +121,7 @@ private:
     std::string f_name;
     
     //파일 버퍼
-    shared_ptr<unsigned char> f_buf;
+    std::string f_buf;
     
     //파일 버퍼 크기
     unsigned long f_siz;
@@ -192,7 +198,7 @@ private:
     
 public:
     //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
-    bool Start_Cli(shared_ptr<Client>& cli);
+    bool Start_Cli(shared_ptr<Client> cli);
     
 private:
     //Client의 연결이 종료가 되었을때 연결 종료를 해주는 함수
@@ -230,9 +236,7 @@ private:
     //Cuma_sck 클래스
     shared_ptr<Cuma_Sck> cuma_sck;
     
-    
-    //서버 소켓 정보
-    std::shared_ptr<Serv_Sck> serv_sck;
+
     
     bool is_start;
     
@@ -254,9 +258,9 @@ private:
     
     
     //클라이언트의 데이터 수신 struct kevent
-    list<shared_ptr<struct kevent>> CS_cli_kqueue_lst;
-    list<shared_ptr<struct kevent>> CS_cli_kqueue_lst_t;
-    int S_cli_kq;
+    shared_ptr<struct kevent> CS_srv_kevent;
+    shared_ptr<struct kevent> CS_srv_kevent_t;
+    int S_srv_kq;
     
     //Json 쓰기
     Json::StyledWriter writ;

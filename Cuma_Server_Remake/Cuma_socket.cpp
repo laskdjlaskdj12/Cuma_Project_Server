@@ -162,152 +162,28 @@ shared_ptr<Serv_Sck> Cuma_Sck::get_Serv_Sock(){
 
 
 
-//클라이언트가 connect 프로시저
-void Cuma_Sck::cli_chk_con(){
-    
-    try{
-        
-        int nev;
-        
-        //서버소켓에 kqueue를 등록
-        EV_SET(serv_kqueue, serv_sock->get_sck(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
-        
-        
-        //서버소켓을 listen 상태로 설정
-        listen(serv_sock->get_sck(), 128);
-        
-        
-        //클라이언트 소켓의 kqueue의 데이터가 input이 됬을경우
-        while(serv_sock->is_start()){
-            
-            nev = kevent(serv_kq,
-                         serv_kqueue, 1,
-                         serv_kqueue_t, 1,
-                         NULL);
-            
-            
-            //nev 가 에러일때
-            if(nev < 0){
-                throw errno;
-            }
-            
-            
-            else{
-                
-                //상대 소켓이 셧다운이 됬을경우
-                if(serv_kqueue_t->flags & EV_EOF){
-                    std::cout<<"[Error] : Socket is shutdown"<<std::endl;
-                    break;
-                }
-                
-                //서버 소켓을 트리거 했을경우에
-                else if(serv_kqueue_t->ident == serv_sock->get_sck()){
-                    
-                    
-                    
-                    //클라이언트 구조체 할당
-                    shared_ptr<Cli_Sck_Info> cli_tmp (new Cli_Sck_Info);
-                    
-                    
-                    //accept 시킴
-                    cli_tmp->sck = accept(serv_sock->get_sck(), (sockaddr*)&cli_tmp->cli_sck_addr, (socklen_t*)&cli_tmp->siz);
-                    
-                    
-                    //만약 128개의 사이즈가 넘었다면 큐 부족으로 connect false리턴
-                    if(Cli_Info_Lst.size() < 128){
-                        
-                        //큐가 없다고 클라이언트에게 전송
-                        send(cli_tmp->sck, "NO_SPACE_QUEUE", sizeof("NO_SPACE_QUEUE"), 0);
-                        
-                        
-                        //접속한 클라이언트 연결 종료
-                        shutdown(cli_tmp->sck, SHUT_RDWR);
-                        
-                        //s->sck를 flush함
-                        if(cli_tmp)
-                            cli_tmp.reset();
-                        
-                        //커넥션을 shutdown 후 클라이언트 struct를 reset
-                        cli_tmp.reset();
-                        continue;
-                    }
-                    
-                    
-                    //클라이언트 소켓 정보를 큐에 insert
-                    Cli_Info_Lst.push_back(cli_tmp);
-                    
-                    
-                    //shared_ptr에 등록
-                    shared_ptr<struct kevent> k_tmp(new struct kevent);
-                    shared_ptr<struct kevent> k_tmp_tri(new struct kevent);
-                    
-                    //kqueue 이벤트 큐에 등록
-                    EV_SET(&*k_tmp,cli_tmp->sck , EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
-                    
-                    
-                    //클라이언트 이벤트 모니터에 push
-                    cli_kqueue_lst.push_back(k_tmp);
-                    cli_kqueue_lst_t.push_back(k_tmp_tri);
-                    
-                    //클라이언트 소켓버퍼 큐에 추가
-                    cli_lst.push_back(cli_tmp);
-                    
-                    
-                    //클라이언트 struct를 reset
-                    cli_tmp.reset();
-                    
-                    //kevent temp구조체를 reset함
-                    k_tmp.reset();
-                    k_tmp_tri.reset();
-                    
-                    //컨티뉴
-                    continue;
-                }
-                
-            }
-            
-        }
-        
-        //std::exception exception catch
-    }catch(std::exception& e){
-        std::cout<<"[Error] : errno : "<<e.what()<<std::endl;
-        
-        //std::system_error exception catch
-    }catch(std::system_error& e){
-        std::cout<<"[Error] : errno : "<<e.code()<<" what : "<<e.what()<<std::endl;
-    }
+//서버 클라이언트 listen kevent 구조체 리턴
+shared_ptr<struct kevent> Cuma_Sck::get_serv_kqueue(){
+    return this->serv_kqueue;
+}
+
+shared_ptr<struct kevent> Cuma_Sck::get_serv_kqueue_t(){
+    return this->serv_kqueue_t;
 }
 
 
-//이벤트 모니터 리턴
-list<shared_ptr<struct kevent>> Cuma_Sck::get_cli_kqueue_lst(){
-    return cli_kqueue_lst;
+int Cuma_Sck::get_serv_kq(){
+    return serv_kq;
 }
 
 
-//이벤트 트리거 리턴
-list<shared_ptr<struct kevent>> Cuma_Sck::get_cli_kqueue_lst_t(){
-    return cli_kqueue_lst_t;
-}
 
-
-//kqueue() 리턴
-int Cuma_Sck::get_cli_kqueue(){
-    return cli_kq;
-}
-
-
-//클라이언트 소켓 버퍼 리스트
-list<shared_ptr<Cli_Sck_Info>> Cuma_Sck::get_cli_sck_lst(){
-    return cli_lst;
-}
-
-
-//Cuma_Sck 종료 클라이언트 소켓 디스크립터에게 shutdown 통보
+//Cuma_sck 를 stop함
 void Cuma_Sck::stop(){
     
-    serv_sock->
-    for(Cli_Info_Lst)
+    serv_sock->stop_srv();
+    serv_kqueue.reset();
+    serv_kqueue_t.reset();
     
 }
 
@@ -317,24 +193,6 @@ Cuma_Sck::~Cuma_Sck(){
     //serv_sock의 포인터 reset
     if(serv_sock.use_count() > 0){
         serv_sock.reset();
-    }
-    
-    
-    //클라이언트 수신 이벤트 큐 kevent 포인터 flush
-    for(list<shared_ptr<struct kevent>>::iterator iter = cli_kqueue_lst.begin(); iter != cli_kqueue_lst.end(); iter++){
-        
-        if(iter->use_count() > 0){
-            iter->reset();
-        }
-    }
-    
-    
-    //cli_Info_lst의 포인터 reset
-    for(list<shared_ptr<Cli_Sck_Info>>::iterator iter = Cli_Info_Lst.begin(); iter != Cli_Info_Lst.end(); iter++){
-        
-        if(iter->use_count() > 0){
-            iter->reset();
-        }
     }
     
 }
