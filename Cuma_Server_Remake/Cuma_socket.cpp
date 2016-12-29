@@ -134,6 +134,7 @@ bool Serv_Sck::is_start(){
 
 Cuma_Sck::Cuma_Sck(){
     try{
+        serv_sock = make_shared<Serv_Sck>();
         
         serv_kq = kqueue();
         if(serv_kq == -1){
