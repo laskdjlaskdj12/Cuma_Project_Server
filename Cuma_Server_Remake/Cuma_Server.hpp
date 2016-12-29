@@ -29,6 +29,7 @@ using std::stringstream;
 using std::shared_ptr;
 using std::ofstream;
 using std::ifstream;
+using std::make_shared;
 
 //클라이언트의 접속이 있었을 경우에 Cuma_server에서 클라이언트의 obj를 할당하고
 //클라이언트 obj의 req를 파악해서 배분하는 코어 역활을 함
@@ -169,10 +170,10 @@ public:
     
     //클라이언트의 소켓 kqueue로 recv되었을때 스레드에 할당하여 할당 명령을 수행함
     void start();
-    
-    //Cuma_server로 stop
     void stop();
     
+    bool is_active();
+    void set_stop(bool b);
     
 //========= private 함수 영역 ==============
     

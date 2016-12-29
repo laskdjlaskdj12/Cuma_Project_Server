@@ -166,6 +166,14 @@ void Cuma_Server::stop(){
 }
 
 
+bool Cuma_Server::is_active(){
+    return is_start;
+}
+
+
+void Cuma_Server::set_stop(bool b){
+    is_start = b;
+}
 
 
 //========= private 함수 영역 ==============

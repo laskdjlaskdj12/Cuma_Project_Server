@@ -7,11 +7,16 @@
 //
 
 #include <iostream>
-#include "Cuma_socket.hpp"
-#include "Cuma_File_Block.hpp"
+#include "Cuma_Server.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+   
+    //Cuma_Server의 shared_ptr를 제공함
+    shared_ptr<Cuma_Server> serv_sck = std::make_shared<Cuma_Server>();
+    
+    
+    //시작함
+    serv_sck->start();
+    
+    
 }

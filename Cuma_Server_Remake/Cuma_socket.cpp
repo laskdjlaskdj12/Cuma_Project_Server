@@ -21,7 +21,7 @@ const int Serv_Sck::get_sck(){
     return srv_sock;
 }
 const char* Serv_Sck::get_addr(){
-    return  inet_ntoa(srv_sck_addr->sin_addr);
+    return  inet_ntoa(srv_sck_addr.sin_addr);
 }
 const int Serv_Sck::get_prt(){
     return srv_prt;
@@ -39,7 +39,7 @@ void Serv_Sck::set_prt(int prt){
     srv_prt = prt;
 }
 void Serv_Sck::set_addr(const char* addr){
-    srv_sck_addr->sin_addr.s_addr = inet_addr(addr);
+    srv_sck_addr.sin_addr.s_addr = inet_addr(addr);
 }
 void Serv_Sck::set_lst(int siz){
     srv_lstn = siz;
@@ -52,8 +52,8 @@ void Serv_Sck::start_srv(){
     
     srv_sock = socket(PF_INET,SOCK_STREAM,0);
     
-    srv_sck_addr->sin_family = AF_INET;
-    srv_sck_addr->sin_port = htons(srv_prt);
+    srv_sck_addr.sin_family = AF_INET;
+    srv_sck_addr.sin_port = htons(srv_prt);
     
     bnd_no_wat = true;
     setsockopt(srv_sock, SOL_SOCKET, SO_REUSEADDR, &bnd_no_wat, sizeof(bool));
@@ -140,6 +140,8 @@ Cuma_Sck::Cuma_Sck(){
             throw errno;
         }
         
+        serv_kqueue = make_shared<struct kevent>();
+        serv_kqueue_t = std::__1::make_shared<struct kevent>();
         
         //서버 초기 설정
         serv_sock->set_sock(socket(PF_INET,SOCK_STREAM,0));

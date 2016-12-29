@@ -71,6 +71,7 @@
 using std::string;
 using std::list;
 using std::shared_ptr;
+using std::make_shared;
 
 //서버 소켓정보
 class Serv_Sck{
@@ -107,7 +108,7 @@ private:
     int srv_lstn;                 //클라이언트 서버 대기 큐
     bool active;                    //서버가 시작되었는지
     
-    shared_ptr<sockaddr_in> srv_sck_addr;  //서버 sock_addr
+    sockaddr_in srv_sck_addr;  //서버 sock_addr
 };
 
 

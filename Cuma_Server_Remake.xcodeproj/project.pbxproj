@@ -12,7 +12,6 @@
 		50A2BC4B1E01C620002DBD12 /* Cuma_Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */; };
 		50DD99671DE818E00053B530 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99661DE818E00053B530 /* main.cpp */; };
 		50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD996D1DE818F30053B530 /* Cuma_socket.cpp */; };
-		50DD99721DE849D50053B530 /* Cuma_File_Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99701DE849D50053B530 /* Cuma_File_Block.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,8 +35,6 @@
 		50DD99661DE818E00053B530 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		50DD996D1DE818F30053B530 /* Cuma_socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_socket.cpp; sourceTree = "<group>"; };
 		50DD996E1DE818F30053B530 /* Cuma_socket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_socket.hpp; sourceTree = "<group>"; };
-		50DD99701DE849D50053B530 /* Cuma_File_Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_File_Block.cpp; sourceTree = "<group>"; };
-		50DD99711DE849D50053B530 /* Cuma_File_Block.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_File_Block.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,8 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				50DD99661DE818E00053B530 /* main.cpp */,
-				50DD99701DE849D50053B530 /* Cuma_File_Block.cpp */,
-				50DD99711DE849D50053B530 /* Cuma_File_Block.hpp */,
 				50DD996D1DE818F30053B530 /* Cuma_socket.cpp */,
 				50DD996E1DE818F30053B530 /* Cuma_socket.hpp */,
 				505C0F421DF2CF8700384903 /* Cuma_Server */,
@@ -161,7 +156,6 @@
 				50A2BC4B1E01C620002DBD12 /* Cuma_Server.cpp in Sources */,
 				50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */,
 				503127071E0C1F4800AF11B7 /* jsoncpp.cpp in Sources */,
-				50DD99721DE849D50053B530 /* Cuma_File_Block.cpp in Sources */,
 				50DD99671DE818E00053B530 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
