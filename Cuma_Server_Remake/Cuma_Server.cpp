@@ -60,9 +60,13 @@ void Cuma_Server::start(){
         //서버소켓에 kqueue를 등록
         EV_SET((&*CS_srv_kevent), (&*cuma_sck->get_Serv_Sock())->get_sck(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
         
+        //클라이언트가 connect 될때가지 listen
         listen(cuma_sck->get_Serv_Sock()->get_sck(),128);
         
+        
+        //만약 is_start == true
         while(is_start){
+            
             nev = kevent(S_srv_kq,
                          (&* CS_srv_kevent), 1,
                          (&* CS_srv_kevent_t), 1,
@@ -95,7 +99,7 @@ void Cuma_Server::start(){
                     shared_ptr<Client> Client_temp  (new Client);
                     
                     
-                    //accept 시킴
+                    //accept
                     cli_tmp->sck = accept(cuma_sck->get_Serv_Sock()->get_sck(),
                                           (sockaddr*)&cli_tmp->cli_sck_addr,
                                           (socklen_t*)&cli_tmp->siz);
@@ -115,28 +119,58 @@ void Cuma_Server::start(){
                         close(cli_tmp->sck);
                         
                         
-                        //커넥션을 shutdown 후 클라이언트 struct를 reset
+                        //Client object reset
                         cli_tmp.reset();
+                        Client_temp.reset();
+                        
+                        continue;
+                        
+                        
+                        //만약 중복 재접속 했을 경우
+                    }else if(std::find(Cli_des.begin(), Cli_des.end(), cli_tmp->sck) != Cli_des.end()){
+                        
+                        //중복접속으로 클라이언트에게 전송
+                        send(cli_tmp->sck, "NO_SPACE_QUEUE", sizeof("NO_SPACE_QUEUE"), 0);
+                        
+                        
+                        //접속한 클라이언트 연결 종료
+                        shutdown(cli_tmp->sck, SHUT_RDWR);
+                        
+                        //cli_tmp 디스크립터 close
+                        close(cli_tmp->sck);
+                        
+                        
+                        //Client object reset
+                        cli_tmp.reset();
+                        Client_temp.reset();
+                        
+                        continue;
+                        
+                        //정상적인 접속일 경우
+                    }else{
+                        
+                        
+                        //cli_sck_info를 Client obj에 inheritage
+                        Client_temp->set_cli_sck_info(cli_tmp);
+                        
+                        
+                        //쓰레드 생성
+                        std::thread Cli_proc(&Cuma_Server::Start_Cli, this, Client_temp);
+                        
+                        
+                        //Client 리스트에 push
+                        c_list.push_back(Client_temp);
+                        
+                        
+                        
+                        //cli_tmp와 Client_temp의 index를 reset
+                        cli_tmp.reset();
+                        Client_temp.reset();
+                        
+                        
+                        //컨티뉴
                         continue;
                     }
-                    
-                    
-                    //cli_sck_info를 Client의 파라미터로 인식
-                    Client_temp->set_cli_sck_info(cli_tmp);
-                    
-                    
-                    //쓰레드 생성
-                    std::thread Cli_proc(&Cuma_Server::Start_Cli, this, Client_temp);
-                    
-                
-                    
-                    //cli_tmp와 Client_temp의 index를 reset
-                    cli_tmp.reset();
-                    Client_temp.reset();
-                    
-                    
-                    //컨티뉴
-                    continue;
                 }
                 
             }
@@ -171,7 +205,7 @@ bool Cuma_Server::is_active(){
 }
 
 
-void Cuma_Server::set_stop(bool b){
+void Cuma_Server::set_active(bool b){
     is_start = b;
 }
 
@@ -182,6 +216,7 @@ void Cuma_Server::set_stop(bool b){
 
 //클라이언트가 파일 읽는 함수 : 뮤텍스를 사용
 int Cuma_Server::r_binary(shared_ptr<Client>& c){
+    
     try{
         
         //Client 파라미터에 파일 이름을 설정
@@ -245,39 +280,37 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
 
 
 //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
-int Cuma_Server::w_binary(const shared_ptr<Client>& c)
-                        /*const std::string name,
-                          const std::string binary,
-                          const unsigned long byte)*/{
-    try{
-        
-        //뮤텍스 lock을 함
-        mtx_lock.lock();
-        
-        const std::string name = c->get_f_name();
-        const std::string binary = c->get_file();
-        const unsigned long byte = c->get_f_siz();
-        
-        //파일 쓰기(바이너리로 파일을 오픈)
-        file_write.open(name,std::ios::binary);
-        
-        
-        //파일을 입력하기
-        file_write.write(binary.c_str(), byte);
-        
-        //뮤텍스 unlock
-        mtx_lock.unlock();
-        
-        
-        return 0;
-        
-        
-        //만약 exception이 됬다면
-    }catch(std::exception& e){
-        std::cout<<"[Error] : "<<e.what()<<std::endl;
-        return -1;
-    }
-}
+int Cuma_Server::w_binary(const shared_ptr<Client>& c){
+    
+     try{
+         
+         //뮤텍스 lock을 함
+         mtx_lock.lock();
+         
+         const std::string name = c->get_f_name();
+         const std::string binary = c->get_file();
+         const unsigned long byte = c->get_f_siz();
+         
+         //파일 쓰기(바이너리로 파일을 오픈)
+         file_write.open(name,std::ios::binary);
+         
+         
+         //파일을 입력하기
+         file_write.write(binary.c_str(), byte);
+         
+         //뮤텍스 unlock
+         mtx_lock.unlock();
+         
+         
+         return 0;
+         
+         
+         //만약 exception이 됬다면
+     }catch(std::exception& e){
+         std::cout<<"[Error] : "<<e.what()<<std::endl;
+         return -1;
+     }
+ }
 
 
 //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
@@ -461,7 +494,7 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
         }
         
         //수신받은 temp를 json으로 세팅함
-         rcv_f = c->cha_to_str(s_t);
+        rcv_f = c->cha_to_str(s_t);
         
         //json을 클라이언트로 등록
         c->set_json(rcv_f);

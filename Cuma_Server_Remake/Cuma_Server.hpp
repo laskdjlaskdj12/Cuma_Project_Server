@@ -172,8 +172,9 @@ public:
     void start();
     void stop();
     
+    //public bool 프로퍼티
     bool is_active();
-    void set_stop(bool b);
+    void set_active(bool b);
     
 //========= private 함수 영역 ==============
     
@@ -183,14 +184,11 @@ private:
     
     //클라이언트가 파일 읽는 함수 : 뮤텍스를 사용
     int r_binary(shared_ptr<Client>& c);
-    
     int w_binary(const shared_ptr<Client>& c);
     
     
     //수신 함수
     void rcv_val(shared_ptr<Client>&c);
-    
-    //보낼 함수
     void snd_val(shared_ptr<Client>&c,
                  Json::Value& j);
     
@@ -212,19 +210,8 @@ private:
     //코어 갯수
     unsigned int thr_pth;
     
-    
-    //쓰레드 리스트
-    std::list<std::thread> thr_lst;
-    
-    
-    //파일 검색 변수
     //쓰기는 뮤텍스 lock을 통해 critical section화 함
     ofstream file_write;
-    
-    
-    //ifstream은 쓰레드 safe를 할 필요가 없으므로
-    //ifstream file_read;
-    
     
     //뮤텍스
     std::mutex mtx_lock;
@@ -237,8 +224,7 @@ private:
     //Cuma_sck 클래스
     shared_ptr<Cuma_Sck> cuma_sck;
     
-
-    
+    //active가 됬는지 확인
     bool is_start;
     
     //Cuma_sck의 쓰레드
@@ -255,7 +241,7 @@ private:
     int cli_max;
     
     //클라이언트 소켓 디스크립터 모음
-    std::list<shared_ptr<Cli_Sck_Info>> Cli_Info;
+    std::list<int> Cli_des;
     
     
     //클라이언트의 데이터 수신 struct kevent
@@ -265,11 +251,7 @@ private:
     
     //Json 쓰기
     Json::StyledWriter writ;
-    
-    //Json 읽기
     Json::Reader read;
-    
-    //Json 변수
     Json::Value val;
     
 };
