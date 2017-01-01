@@ -161,7 +161,8 @@ void Cuma_Server::start(){
                         //Client 리스트에 push
                         c_list.push_back(Client_temp);
                         
-                        
+                        //클라이언트 디스크립터에 push
+                        Cli_des.push_back(cli_tmp->sck);
                         
                         //cli_tmp와 Client_temp의 index를 reset
                         cli_tmp.reset();
