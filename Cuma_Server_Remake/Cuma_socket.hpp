@@ -73,10 +73,10 @@ using std::list;
 using std::shared_ptr;
 using std::make_shared;
 
-//서버 소켓정보
+//서버 소켓 디스크립터 정보
 class Serv_Sck{
 public:
-    Serv_Sck():srv_sock(0),srv_prt(0),srv_lstn(0),active(false){};
+    Serv_Sck();
     ~Serv_Sck();
     
     //소켓 프로퍼티 영역
@@ -84,31 +84,22 @@ public:
     const char* get_addr();         //서버 ip
     const int get_prt();            //서버 prt
     const int get_lstn();           //서버 클라이언트 listen 크기
+    sockaddr_in get_srv_sck_addr();
     
     
     //소켓 set 영역
     void set_sock(int dis);         //소켓 디스크립터
     void set_prt(int prt);          //서버 prt
-    void set_addr(const char* addr);//서버 ip
     void set_lst(int siz);          //서버 클라이언트 listen 크기
     
     
-    //서버의 기본적인 기능
-    void start_srv();               //서버의 시작
-    void stop_srv();                //서버 정지
-    void restrt_srv();              //서버 재시작
-    void exit_serv();               //서버 정료
-    bool is_start();                //서버가 시작되었는지?
-    
-    
 private:
-    int srv_sock;                   //서버 소켓
-    int srv_prt;                    //서버 포트
-    char* srv_addr;                  //서버 주소
-    int srv_lstn;                 //클라이언트 서버 대기 큐
-    bool active;                    //서버가 시작되었는지
-    
-    sockaddr_in srv_sck_addr;  //서버 sock_addr
+    int srv_sock_;                  //서버 소켓
+    int srv_prt_;                   //서버 포트
+    char* srv_addr_;                //서버 주소
+    int srv_lstn_;                  //클라이언트 서버 대기 큐
+    bool srv_bnd_wait;              //서버 바인드 대기
+    sockaddr_in srv_sck_addr_;      //서버 sock_addr
 };
 
 
@@ -142,6 +133,15 @@ public:
     Cuma_Sck();
     ~Cuma_Sck();
     
+    //네트워크 설정
+    void set_prt(const int p);
+    
+    string ip();
+    int prt();
+    
+    //서버 가동
+    void start();
+    void stop();
     
     //프로퍼티
     shared_ptr<Serv_Sck> get_Serv_Sock();  //서버 소켓 에 대한 정보
@@ -152,20 +152,19 @@ public:
     shared_ptr<struct kevent> get_serv_kqueue_t();
     int get_serv_kq();
     
-    //Cuma_Sck 셧다운
-    void stop();
-    
     
 private:
     
     //서버 소켓에 대한 정보
-    shared_ptr<Serv_Sck> serv_sock;
+    shared_ptr<Serv_Sck> serv_sock_;
     
     
     //서버 수신 이벤트 큐
-    shared_ptr<struct kevent> serv_kqueue;      //이벤트 모니터링
-    shared_ptr<struct kevent> serv_kqueue_t;    //이벤트 트리거
-    int serv_kq;
+    shared_ptr<struct kevent> serv_kqueue_;      //이벤트 모니터링
+    shared_ptr<struct kevent> serv_kqueue_t_;    //이벤트 트리거
+    int serv_kq_;
+    
+    sockaddr_in srv_sck_addr_;
     
 };
 

@@ -29,10 +29,7 @@ Cuma_Server::Cuma_Server(){
     
     
     //쓰레드 코어의 갯수만큼 쓰레드 생성
-    
     thr_pth = std::thread::hardware_concurrency();
-    
-    
     
     
     //cuma_sck의 kevent struct와 kevent 가지고 오기
@@ -49,11 +46,19 @@ Cuma_Server::~Cuma_Server(){
     cuma_sck.reset();
     val.clear();
 }
+void Cuma_Server::set_prt(const int p){
+    cuma_sck->set_prt(p);
+}
 
 
 //서버의 listen 상태를 설정후 listen된 클라이언트들은 Start_cli로 보냄
 void Cuma_Server::start(){
     try{
+        
+        //소켓을 Cuma_Sck클래스에서 구성
+        cuma_sck->start();
+        
+        
         // 클라이언트 소켓의 kqueue의 리턴값을 저장할 temp를 만듬
         int nev;
         
@@ -106,22 +111,28 @@ void Cuma_Server::start(){
                     
                     
                     //만약 128개의 사이즈가 넘었다면 큐 부족으로 connect false리턴
-                    if(c_list.size() < 128){
+                    if(c_list.size() > 128){
                         
+                        Client_temp->set_cli_sck_info(cli_tmp);
+    
                         //큐가 없다고 클라이언트에게 전송
-                        send(cli_tmp->sck, "NO_SPACE_QUEUE", sizeof("NO_SPACE_QUEUE"), 0);
+                        Json::Value ERR;
+                        ERR["RCV_ERR"] = "NO_SPACE_QUEUE";
                         
+                        
+                        snd_val(Client_temp, ERR);
                         
                         //접속한 클라이언트 연결 종료
-                        shutdown(cli_tmp->sck, SHUT_RDWR);
+                        shutdown(Client_temp->get_cli_sck_info()->sck, SHUT_RDWR);
                         
                         //cli_tmp 디스크립터 close
-                        close(cli_tmp->sck);
+                        close(Client_temp->get_cli_sck_info()->sck);
                         
                         
                         //Client object reset
-                        cli_tmp.reset();
                         Client_temp.reset();
+                        cli_tmp.reset();
+                        ERR.clear();
                         
                         continue;
                         
@@ -129,24 +140,30 @@ void Cuma_Server::start(){
                         //만약 중복 재접속 했을 경우
                     }else if(std::find(Cli_des.begin(), Cli_des.end(), cli_tmp->sck) != Cli_des.end()){
                         
-                        //중복접속으로 클라이언트에게 전송
-                        send(cli_tmp->sck, "NO_SPACE_QUEUE", sizeof("NO_SPACE_QUEUE"), 0);
+                        Client_temp->set_cli_sck_info(cli_tmp);
+                        
+                        //중복재접속으로 클라이언트에게 전송
+                        Json::Value ERR;
+                        ERR["RCV_ERR"] = "SECOUND_SPACE";
+                        
+                        snd_val(Client_temp, ERR);
                         
                         
                         //접속한 클라이언트 연결 종료
-                        shutdown(cli_tmp->sck, SHUT_RDWR);
+                        shutdown(Client_temp->get_cli_sck_info()->sck, SHUT_RDWR);
                         
                         //cli_tmp 디스크립터 close
-                        close(cli_tmp->sck);
+                        close(Client_temp->get_cli_sck_info()->sck);
                         
                         
                         //Client object reset
-                        cli_tmp.reset();
                         Client_temp.reset();
+                        cli_tmp.reset();
                         
                         continue;
                         
                         //정상적인 접속일 경우
+                        
                     }else{
                         
                         
@@ -335,18 +352,21 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         cli->set_json(val_tmp);
         
         //클라이언트 객체의 파일 설정
-        cli->set_f_name(val_tmp["File"].asString());
-        cli->set_f_siz(val_tmp["F_Siz"].asLargestUInt());
+        cli->set_f_name(val_tmp["F_name"].asString());
+        cli->set_f_siz(val_tmp["F_siz"].asLargestUInt());
+        cli->set_file(val_tmp["F_binary"].asString());
+        cli->set_f_frame(val_tmp["F_frame_num"].asUInt64());
+        
         
         //오브젝트 모드 확인
         switch (val_tmp["MODE"].asInt()){
-            case 1:     //파일 read일시
+            case READ_BINARY:     //파일 read일시
                 if(r_binary(cli) < 0){
                     throw "NOFILE";
                 }
                 break;
                 
-            case 2:     //파일 write일시
+            case WRITE_BINARY:     //파일 write일시
                 if(w_binary(cli) < 0){
                     throw "NOWRIGHT";
                 }
@@ -362,9 +382,9 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         
         //파일 이름, 크기, 바이너리 추가
-        val_tmp["File_name"] = cli->get_f_name();
-        val_tmp["File_binary"] = cli->get_file();
-        val_tmp["File_siz"] = (u_int64_t)cli->get_f_siz();
+        val_tmp["F_name"] = cli->get_f_name();
+        val_tmp["F_binary"] = cli->get_file();
+        val_tmp["F_siz"] = (u_int64_t)cli->get_f_siz();
         
         //val_tmp를 전송함
         snd_val(cli, val_tmp);
@@ -458,9 +478,9 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
     try{
         
         //변수들
-        unsigned long s;        //파일 크기
+        unsigned long long s;        //파일 크기
         long t;                 //파일버퍼 템프
-        unsigned long t1;
+        unsigned long long t1;
         char* f;                //파일 버퍼 temp
         string s_t;             //버퍼 스트링 temp
         Json::Value rcv_f;

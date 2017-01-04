@@ -22,6 +22,9 @@
 #include <json/json.h>
 #include "Cuma_socket.hpp"
 
+#define READ_BINARY 1
+#define WRITE_BINARY 2
+
 
 using std::string;
 using std::list;
@@ -65,13 +68,17 @@ public:
     
     //================ 프로퍼티 =========================
     
-    //파일 이름 세팅
+    //파일 버퍼 세팅
      void set_file(const string s);
      string get_file();
 
     //파일 사이즈 등록
      void set_f_siz(unsigned long s);
      long get_f_siz();
+    
+    //파일 프레임 등록
+    void set_f_frame(unsigned long long f);
+    unsigned long long get_f_frame();
     
     //클라이언트 소켓 info를 등록
      shared_ptr<Cli_Sck_Info> get_cli_sck_info();
@@ -125,7 +132,10 @@ private:
     std::string f_buf;
     
     //파일 버퍼 크기
-    unsigned long f_siz;
+    unsigned long long f_siz;
+    
+    //파일 프레임 넘버
+    unsigned long long f_num;
     
 //========= JSON 영역 ===============
     
@@ -172,6 +182,8 @@ public:
     void start();
     void stop();
     
+    void set_prt(const int p);
+    
     //public bool 프로퍼티
     bool is_active();
     void set_active(bool b);
@@ -193,7 +205,7 @@ private:
                  Json::Value& j);
     
     
-    //========= Client 멤버 함수 영역 ==============
+//========= Client 멤버 함수 영역 ==============
     
 public:
     //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함

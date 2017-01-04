@@ -57,6 +57,16 @@ string Client::get_file(){
     return f_buf;
 }
 
+//파일 프레임 등록
+void Client::set_f_frame(unsigned long long f){
+    this->f_num = f;
+    
+}
+unsigned long long Client::get_f_frame(){
+    return f_num;
+}
+
+
 
 //파일 사이즈 설정
 void Client::set_f_siz(unsigned long s){
