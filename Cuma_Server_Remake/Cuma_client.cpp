@@ -1,14 +1,12 @@
-//
-//  Cuma_Client.cpp
+ //
+//  Cuma_client.cpp
 //  Cuma_Server_Remake
 //
-//  Created by ace on 2016. 12. 27..
-//  Copyright © 2016년 ace. All rights reserved.
+//  Created by ace on 2017. 1. 5..
+//  Copyright © 2017년 ace. All rights reserved.
 //
 
-#include "Cuma_Server.hpp"
-
-
+#include "Cuma_client.hpp"
 
 // =================== Client 객체 ==============================
 
@@ -132,4 +130,3 @@ void Client::set_kevent(shared_ptr<struct kevent> e){
 bool Client::is_start(){
     return start;
 }
-

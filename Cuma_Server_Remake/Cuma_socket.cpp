@@ -109,8 +109,8 @@ void Cuma_Sck::start(){
     srv_sck_addr_.sin_port = htons(serv_sock_->get_prt());
     
     
-    bool bind_wait = true;
-    setsockopt(serv_sock_->get_sck(), SOL_SOCKET, SO_REUSEADDR,&bind_wait , sizeof(bool));
+    int bind_wait = 1;
+    setsockopt(serv_sock_->get_sck(), SOL_SOCKET, SO_REUSEADDR,&bind_wait , sizeof(int));
     
     bind(serv_sock_->get_sck(), (sockaddr*)&srv_sck_addr_, sizeof(sockaddr));
 }
