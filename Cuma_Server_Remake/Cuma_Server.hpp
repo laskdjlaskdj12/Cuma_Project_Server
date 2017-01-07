@@ -15,6 +15,8 @@
 #include <list>
 #include <string>
 
+#include <algorithm>
+
 //파일을 읽을 때 뮤텍스를 호출함
 #include <mutex>
 
@@ -94,6 +96,7 @@ private:
     //Client의 연결이 종료가 되었을때 연결 종료를 해주는 함수
     void Close_Cli(shared_ptr<Client>& C);
     
+    void Dalloc_cli();
     
 private:
 //========= 디바이스 로컬 영역 ==============
@@ -106,9 +109,9 @@ private:
     
     //뮤텍스
     std::mutex mtx_lock;
-    
+    std::mutex thr_lst_lck_;
     //Thread 리스트
-    std::list<shared_ptr<std::thread>> t_list;
+    std::list<std::thread> t_list;
     
 //========= 서버 클래스 영역 ==============
     

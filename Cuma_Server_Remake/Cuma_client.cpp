@@ -10,7 +10,9 @@
 
 // =================== Client 객체 ==============================
 
-Client::Client():start(false){}
+Client::Client():start(false){
+    cli_sck = std::__1::make_shared<Cli_Sck_Info>();
+}
 
 Client::Client(shared_ptr<Cli_Sck_Info> s):start(false){
     
@@ -42,6 +44,10 @@ string Client::cha_to_str(const Json::Value j){
 
 //Client를 stop함
 void Client::stop(){
+    
+    //클라이언트 디스크립터 shutdown
+    shutdown(cli_sck->sck, SHUT_RDWR);
+    
     
 }
 
@@ -122,6 +128,23 @@ shared_ptr < struct kevent> Client::get_kevent(){
 }
 void Client::set_kevent(shared_ptr<struct kevent> e){
     cli_keven = e;
+}
+
+
+
+
+void Client::set_thread_id(std::thread::id id){
+    
+    //외부 쓰레드에서 참조하여 작성하는것이므로 문맥제어함
+    Cli_mutex_.lock();
+    
+    T_id_ = id;
+    
+    Cli_mutex_.unlock();
+    
+}
+std::thread::id Client::get_thread_id(){
+    return T_id_;
 }
 
 

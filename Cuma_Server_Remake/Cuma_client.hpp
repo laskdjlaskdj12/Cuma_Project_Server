@@ -31,13 +31,13 @@ class Client{
     
 public:
     
-    //클라이언트의 정보를 입력
+    //클라이언트 init
     Client();
     Client(shared_ptr<Cli_Sck_Info> s);
     ~Client();
     
     
-    //Json::Reader로 string을 입력함
+    //Json::Reader로 설정
     Json::Value cha_to_json(const string s);
     
     
@@ -88,6 +88,10 @@ public:
     void set_kevent(shared_ptr<struct kevent> e);
     
     
+    //Client의 Thread_id를 등록
+    void set_thread_id(std::thread::id id);
+    std::thread::id get_thread_id();
+    
     //시작했는지 뮤텍스 측정
     bool is_start();
     
@@ -135,7 +139,9 @@ private:
     
     //========= 뮤텍스 영역 ===============
     //뮤텍스로 쓰레드 제어하기
-    std::mutex Cli_test;
+    std::mutex Cli_mutex_;
+    
+    std::thread::id T_id_;
     
     bool start;
     

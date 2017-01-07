@@ -38,7 +38,6 @@ Cuma_Server::Cuma_Server(){
     S_srv_kq = cuma_sck->get_serv_kq();
     
     
-    
 }
 
 
@@ -87,7 +86,6 @@ void Cuma_Server::start(){
             
             
             else{
-                
                 //상대 소켓이 셧다운이 됬을경우
                 if(CS_srv_kevent_t->flags & EV_EOF){
                     std::cout<<"[Error] : Socket is shutdown"<<std::endl;
@@ -100,16 +98,14 @@ void Cuma_Server::start(){
                     
                     
                     //클라이언트 구조체 할당
-                    shared_ptr<Cli_Sck_Info> cli_tmp (new Cli_Sck_Info);
-                    shared_ptr<Client> Client_temp  (new Client);
+                    shared_ptr<Client> Client_temp(new Client);
+                    
                     
                     
                     //클라이언트의 접속을 허가
-                    cli_tmp->sck = accept(cuma_sck->get_Serv_Sock()->get_sck(),
-                                          (sockaddr*)&cli_tmp->cli_sck_addr,
-                                          (socklen_t*)&cli_tmp->siz);
-                    
-                    Client_temp->set_cli_sck_info(cli_tmp);
+                    Client_temp->get_cli_sck_info()->sck = accept(cuma_sck->get_Serv_Sock()->get_sck(),
+                                          (sockaddr*)&(Client_temp->get_cli_sck_info()->cli_sck_addr),
+                                          (socklen_t*)&(Client_temp->get_cli_sck_info()->siz));
                     
                     //만약 128개의 사이즈가 넘었다면 큐 부족으로 connect false리턴
                     if(c_list.size() > 128){
@@ -130,12 +126,13 @@ void Cuma_Server::start(){
                         
                         //Client object reset
                         Client_temp.reset();
-                        cli_tmp.reset();
                         ERR.clear();
                         
                         
                         //만약 중복 재접속 했을 경우
-                    }else if(std::find(Cli_des.begin(), Cli_des.end(), cli_tmp->sck) != Cli_des.end()){
+                    }else if(std::find(Cli_des.begin(),
+                                       Cli_des.end(),
+                                       Client_temp->get_cli_sck_info()->sck) != Cli_des.end()){
                         
                         //에러코드를 클라이언트에게 전송
                         Json::Value ERR;
@@ -153,7 +150,7 @@ void Cuma_Server::start(){
                         
                         //Client object reset
                         Client_temp.reset();
-                        cli_tmp.reset();
+                        ERR.clear();
                         
                         //정상적인 접속일 경우
                     }else{
@@ -165,23 +162,36 @@ void Cuma_Server::start(){
                         snd_val(Client_temp, CON);
                         
                         
-                        //쓰레드 생성
-                        shared_ptr<std::thread> Cli_proc = make_shared<std::thread>(&Cuma_Server::Start_Cli, this, Client_temp);
+                        //std::thread Cli_proc(&Cuma_Server::Start_Cli, this,Client_temp);
                         
                         //쓰레드 큐에 push_back
-                        t_list.push_back(Cli_proc);
+                        t_list.push_back(std::thread(&Cuma_Server::Start_Cli, this,Client_temp));
                         
                         //Client 리스트에 push
                         c_list.push_back(Client_temp);
                         
                         //클라이언트 디스크립터에 push
-                        Cli_des.push_back(cli_tmp->sck);
+                        Cli_des.push_back(Client_temp->get_cli_sck_info()->sck);
                         
-                        std::cout<<"cli_tmp use_count : "<<cli_tmp.use_count()<<std::endl;
+                        std::cout<<"cli_tmp use_count : "<<Client_temp->get_cli_sck_info().use_count()<<std::endl;
                         std::cout<<"Client_temp use_count : "<<Client_temp.use_count()<<std::endl;
                         
-                        cli_tmp.reset();
+                        
                         Client_temp.reset();
+                        CON.clear();
+                        
+                        
+                        //서버 스레드가 joinable한지 check
+                        for(list<std::thread>::iterator it = t_list.begin();
+                            it != t_list.end();
+                            it++){
+                            
+                            if((*it).joinable() == true){
+                                (*it).join();
+                                t_list.erase(it);
+                                std::cout<<"서버 리스트 크기 :"<<t_list.size()<<std::endl;
+                            }
+                        }
                     }
                 }
                 
@@ -196,6 +206,8 @@ void Cuma_Server::start(){
         
         //바로 stop으로 넘어감
         return;
+    }catch(int err_num){
+        std::cout<<"[Error] : Error res"<<std::strerror(err_num)<<std::endl;
     }
 }
 
@@ -296,12 +308,13 @@ int Cuma_Server::w_binary(const shared_ptr<Client>& c){
     
      try{
          
+         
+          std::string name = c->get_f_name();
+          std::string binary = c->get_file();
+          unsigned long byte = c->get_f_siz();
+         
          //뮤텍스 lock을 함
          mtx_lock.lock();
-         
-         const std::string name = c->get_f_name();
-         const std::string binary = c->get_file();
-         const unsigned long byte = c->get_f_siz();
          
          //파일 쓰기(바이너리로 파일을 오픈)
          file_write.open(name,std::ios::binary);
@@ -310,9 +323,14 @@ int Cuma_Server::w_binary(const shared_ptr<Client>& c){
          //파일을 입력하기
          file_write.write(binary.c_str(), byte);
          
+         
+         file_write.close();
+         
          //뮤텍스 unlock
          mtx_lock.unlock();
          
+         name.clear();
+         binary.clear();
          
          return 0;
          
@@ -334,13 +352,6 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         //val_tmp로 클라이언트로부터 수신을 받음
         Json::Value val_tmp = cli->get_json();
-        
-        //만약 Error인 오브젝트가 왔을시에
-        //if(val_tmp.isMember("Error") != true){
-            
-            //throw string
-            //throw "CLI_RCV_ERR";
-        //}
         
         
         //클라이언트 객체의 파일 설정
@@ -380,6 +391,8 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         //val_tmp를 전송함
         snd_val(cli, val_tmp);
+        
+        val_tmp.clear();
         
         //클라이언트 접속 connect 셧다운
         Close_Cli(cli);
@@ -459,9 +472,45 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
 //Client의 연결이 종료가 되었을때 Client 커넥션 종료
 void Cuma_Server::Close_Cli(shared_ptr<Client>& c){
     
+    
+    //큐에 등록된 Client_list, Cliet_sck_info를 remove 함
+    c_list.remove(c);
+    Cli_des.remove(c->get_cli_sck_info()->sck);
+    
+    
+    /*//뮤텍스로 락 후 쓰레드 리스트에서 현재 쓰레드id를 제외함
+    thr_lst_lck_.lock();
+    
+    for(std::list<std::__1::shared_ptr<std::thread>>::iterator it = t_list.begin();
+        it != t_list.end(); it++){
+        if((it->get())->get_id() == c->get_thread_id()){
+            t_list.
+            break;
+        }
+    }
+    
+    thr_lst_lck_.unlock();*/
+    
+    
     //해당 소켓 디스크립터를 shutdown함
     c->stop();
     
+    //Client의 객체를 소멸시키기
+    std::cout<<"참조 타임 : "<<c.use_count()<<std::endl;
+    c.reset();
+    std::cout<<"참조 타임 : "<<c.use_count()<<std::endl;
+}
+
+void Cuma_Server::Dalloc_cli(){
+    
+    while(is_start){
+        
+        for(std::list<std::__1::shared_ptr<Client>>::iterator it = c_list.begin(); it != c_list.end(); it++){
+            
+        }
+        
+        sleep(1);
+    }
 }
 
 
@@ -471,10 +520,10 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
         
         //변수들
         unsigned long long f_siz = 0;        //파일 크기
-        unsigned long long f_tmp;                             //파일버퍼 템프
+                 long long f_tmp;            //파일버퍼 템프
         unsigned long long f_tmp1 = 0;
-        char* f_bin_tmp;                            //파일 버퍼 temp
-        string f_bin_s_tmp;                         //버퍼 스트링 temp
+        char* f_bin_tmp;                     //파일 버퍼 temp
+        string f_bin_s_tmp;                  //버퍼 스트링 temp
         Json::Value rcv_f;
         
         
@@ -512,6 +561,9 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
         //클라이언트의 json 멤버변수에 등록함
         c->set_json(rcv_f);
         
+        rcv_f.clear();
+        f_bin_s_tmp.clear();
+        
         //f를 딜리트
         delete[] f_bin_tmp;
         
@@ -524,6 +576,8 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
     }catch(Json::Exception& e){
         std::cout<<"[Error] : "<<e.what()<<std::endl;
         return;
+    }catch(unsigned int& e){
+        std::cout<<"[Error] : "<<std::strerror(e)<<std::endl;
     }
     
 }
@@ -540,5 +594,7 @@ void Cuma_Server::snd_val(shared_ptr<Client>&c,
     
     //버퍼 전송
     send(c->get_cli_sck_info()->sck, temp.c_str(), siz,0);
+    
+    temp.clear();
     
 }

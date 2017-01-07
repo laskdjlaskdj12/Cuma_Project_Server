@@ -157,5 +157,8 @@ Cuma_Sck::~Cuma_Sck(){
     if(serv_sock_.use_count() > 0){
         serv_sock_.reset();
     }
+    serv_kqueue_.reset();
+    serv_kqueue_t_.reset();
+    
     
 }

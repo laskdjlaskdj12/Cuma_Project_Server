@@ -30,6 +30,7 @@
 		503127061E0C1F4800AF11B7 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsoncpp.cpp; path = "../../../../xcode/jsoncpp-master/dist/jsoncpp.cpp"; sourceTree = "<group>"; };
 		50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_Server.cpp; sourceTree = "<group>"; };
 		50A2BC4A1E01C620002DBD12 /* Cuma_Server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_Server.hpp; sourceTree = "<group>"; };
+		50CBD8151E1F2F9200DA8387 /* Log.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Log.hpp; sourceTree = "<group>"; };
 		50DD99631DE818E00053B530 /* Cuma_Server_Remake */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Cuma_Server_Remake; sourceTree = BUILT_PRODUCTS_DIR; };
 		50DD99661DE818E00053B530 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		50DD996D1DE818F30053B530 /* Cuma_socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_socket.cpp; sourceTree = "<group>"; };
@@ -82,6 +83,7 @@
 				50F6C84A1E1D4A2600DE8C47 /* Cuma_socket */,
 				50F6C8461E1D494B00DE8C47 /* Client */,
 				505C0F421DF2CF8700384903 /* Cuma_Server */,
+				50CBD8151E1F2F9200DA8387 /* Log.hpp */,
 			);
 			path = Cuma_Server_Remake;
 			sourceTree = "<group>";
