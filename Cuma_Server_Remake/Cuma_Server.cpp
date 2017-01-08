@@ -54,6 +54,7 @@ void Cuma_Server::set_prt(const int p){
 void Cuma_Server::start(){
     try{
         
+       
         //소켓을 Cuma_Sck클래스에서 구성
         cuma_sck->start();
         
@@ -104,8 +105,8 @@ void Cuma_Server::start(){
                     
                     //클라이언트의 접속을 허가
                     Client_temp->get_cli_sck_info()->sck = accept(cuma_sck->get_Serv_Sock()->get_sck(),
-                                          (sockaddr*)&(Client_temp->get_cli_sck_info()->cli_sck_addr),
-                                          (socklen_t*)&(Client_temp->get_cli_sck_info()->siz));
+                                                                  (sockaddr*)&(Client_temp->get_cli_sck_info()->cli_sck_addr),
+                                                                  (socklen_t*)&(Client_temp->get_cli_sck_info()->siz));
                     
                     //만약 128개의 사이즈가 넘었다면 큐 부족으로 connect false리턴
                     if(c_list.size() > 128){
@@ -152,6 +153,8 @@ void Cuma_Server::start(){
                         Client_temp.reset();
                         ERR.clear();
                         
+                        
+                        
                         //정상적인 접속일 경우
                     }else{
                         
@@ -161,17 +164,20 @@ void Cuma_Server::start(){
                         
                         snd_val(Client_temp, CON);
                         
+                        auto thread_t = std::thread(&Cuma_Server::Start_Cli, this,Client_temp);
                         
-                        //std::thread Cli_proc(&Cuma_Server::Start_Cli, this,Client_temp);
+                        //클라이언트 객체제 할당된 쓰레드 insert
+                        Client_temp->set_thread_id(move(thread_t));
                         
                         //쓰레드 큐에 push_back
-                        t_list.push_back(std::thread(&Cuma_Server::Start_Cli, this,Client_temp));
+                        t_list.push_back(move(thread_t));
                         
                         //Client 리스트에 push
                         c_list.push_back(Client_temp);
                         
                         //클라이언트 디스크립터에 push
                         Cli_des.push_back(Client_temp->get_cli_sck_info()->sck);
+                        
                         
                         std::cout<<"cli_tmp use_count : "<<Client_temp->get_cli_sck_info().use_count()<<std::endl;
                         std::cout<<"Client_temp use_count : "<<Client_temp.use_count()<<std::endl;
@@ -180,17 +186,12 @@ void Cuma_Server::start(){
                         Client_temp.reset();
                         CON.clear();
                         
-                        
-                        //서버 스레드가 joinable한지 check
-                        for(list<std::thread>::iterator it = t_list.begin();
-                            it != t_list.end();
-                            it++){
+                        //만약 t_j_list가  5이상 되면 join을 함
+                        if(t_j_list_.size() >5 ){
                             
-                            if((*it).joinable() == true){
-                                (*it).join();
-                                t_list.erase(it);
-                                std::cout<<"서버 리스트 크기 :"<<t_list.size()<<std::endl;
-                            }
+                            //delete thread
+                            delete_thread();
+                            
                         }
                     }
                 }
@@ -306,41 +307,41 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
 //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
 int Cuma_Server::w_binary(const shared_ptr<Client>& c){
     
-     try{
-         
-         
-          std::string name = c->get_f_name();
-          std::string binary = c->get_file();
-          unsigned long byte = c->get_f_siz();
-         
-         //뮤텍스 lock을 함
-         mtx_lock.lock();
-         
-         //파일 쓰기(바이너리로 파일을 오픈)
-         file_write.open(name,std::ios::binary);
-         
-         
-         //파일을 입력하기
-         file_write.write(binary.c_str(), byte);
-         
-         
-         file_write.close();
-         
-         //뮤텍스 unlock
-         mtx_lock.unlock();
-         
-         name.clear();
-         binary.clear();
-         
-         return 0;
-         
-         
-         //만약 exception이 됬다면
-     }catch(std::exception& e){
-         std::cout<<"[Error] : "<<e.what()<<std::endl;
-         return -1;
-     }
- }
+    try{
+        
+        
+        std::string name = c->get_f_name();
+        std::string binary = c->get_file();
+        unsigned long byte = c->get_f_siz();
+        
+        //뮤텍스 lock을 함
+        mtx_lock.lock();
+        
+        //파일 쓰기(바이너리로 파일을 오픈)
+        file_write.open(name,std::ios::binary);
+        
+        
+        //파일을 입력하기
+        file_write.write(binary.c_str(), byte);
+        
+        
+        file_write.close();
+        
+        //뮤텍스 unlock
+        mtx_lock.unlock();
+        
+        name.clear();
+        binary.clear();
+        
+        return 0;
+        
+        
+        //만약 exception이 됬다면
+    }catch(std::exception& e){
+        std::cout<<"[Error] : "<<e.what()<<std::endl;
+        return -1;
+    }
+}
 
 
 //쓰레드 가 클라이언트가 리퀘스트를 입수를 했을시에 클라이언트의 req를 실행함
@@ -472,24 +473,15 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
 //Client의 연결이 종료가 되었을때 Client 커넥션 종료
 void Cuma_Server::Close_Cli(shared_ptr<Client>& c){
     
+    thr_lst_lck_.lock();
+    //해당 스레드 인스턴스를 pushback
+    t_j_list_.push_back(move(c->get_thread_id()));
+    thr_lst_lck_.unlock();
+    
     
     //큐에 등록된 Client_list, Cliet_sck_info를 remove 함
     c_list.remove(c);
     Cli_des.remove(c->get_cli_sck_info()->sck);
-    
-    
-    /*//뮤텍스로 락 후 쓰레드 리스트에서 현재 쓰레드id를 제외함
-    thr_lst_lck_.lock();
-    
-    for(std::list<std::__1::shared_ptr<std::thread>>::iterator it = t_list.begin();
-        it != t_list.end(); it++){
-        if((it->get())->get_id() == c->get_thread_id()){
-            t_list.
-            break;
-        }
-    }
-    
-    thr_lst_lck_.unlock();*/
     
     
     //해당 소켓 디스크립터를 shutdown함
@@ -520,7 +512,7 @@ void Cuma_Server::rcv_val(shared_ptr<Client>& c){
         
         //변수들
         unsigned long long f_siz = 0;        //파일 크기
-                 long long f_tmp;            //파일버퍼 템프
+        long long f_tmp;            //파일버퍼 템프
         unsigned long long f_tmp1 = 0;
         char* f_bin_tmp;                     //파일 버퍼 temp
         string f_bin_s_tmp;                  //버퍼 스트링 temp
@@ -597,4 +589,15 @@ void Cuma_Server::snd_val(shared_ptr<Client>&c,
     
     temp.clear();
     
+}
+
+void Cuma_Server::delete_thread(){
+    
+    for(int i = 0; i < t_j_list_.size(); i++){
+        
+        if( t_j_list_[i].joinable()){
+            t_j_list_[i].join();
+        }
+    }
+    t_j_list_.clear();
 }

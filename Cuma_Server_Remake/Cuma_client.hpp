@@ -89,8 +89,8 @@ public:
     
     
     //Client의 Thread_id를 등록
-    void set_thread_id(std::thread::id id);
-    std::thread::id get_thread_id();
+    void set_thread_id(std::thread _t);
+    std::thread& get_thread_id();
     
     //시작했는지 뮤텍스 측정
     bool is_start();
@@ -141,7 +141,7 @@ private:
     //뮤텍스로 쓰레드 제어하기
     std::mutex Cli_mutex_;
     
-    std::thread::id T_id_;
+    std::thread T_id_;
     
     bool start;
     

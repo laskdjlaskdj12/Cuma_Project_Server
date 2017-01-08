@@ -25,6 +25,9 @@
 #include "Cuma_socket.hpp"
 #include "Cuma_client.hpp"
 
+//sigslot을 할당
+
+
 #define READ_BINARY 1
 #define WRITE_BINARY 2
 
@@ -36,6 +39,7 @@ using std::shared_ptr;
 using std::ofstream;
 using std::ifstream;
 using std::make_shared;
+using std::vector;
 
 //클라이언트의 접속이 있었을 경우에 Cuma_server에서 클라이언트의 obj를 할당하고
 //클라이언트 obj의 req를 파악해서 배분하는 코어 역활을 함
@@ -85,6 +89,8 @@ private:
     void snd_val(shared_ptr<Client>&c,
                  Json::Value& j);
     
+    void delete_thread();
+    
     
 //========= Client 멤버 함수 영역 ==============
     
@@ -110,8 +116,13 @@ private:
     //뮤텍스
     std::mutex mtx_lock;
     std::mutex thr_lst_lck_;
+    
     //Thread 리스트
-    std::list<std::thread> t_list;
+    vector<std::thread> t_list;
+    
+    //join 리스트
+    vector<std::thread> t_j_list_;
+    
     
 //========= 서버 클래스 영역 ==============
     
@@ -120,10 +131,6 @@ private:
     
     //active가 됬는지 확인
     bool is_start;
-    
-    //Cuma_sck의 쓰레드
-    std::thread Cuma_sck_thr;
-    
     
 //========= 클라이언트 클래스 영역 ==============
     

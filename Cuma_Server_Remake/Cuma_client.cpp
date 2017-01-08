@@ -133,17 +133,17 @@ void Client::set_kevent(shared_ptr<struct kevent> e){
 
 
 
-void Client::set_thread_id(std::thread::id id){
+void Client::set_thread_id(std::thread id){
     
     //외부 쓰레드에서 참조하여 작성하는것이므로 문맥제어함
     Cli_mutex_.lock();
     
-    T_id_ = id;
+    T_id_= move(id);
     
     Cli_mutex_.unlock();
     
 }
-std::thread::id Client::get_thread_id(){
+std::thread& Client::get_thread_id(){
     return T_id_;
 }
 

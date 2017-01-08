@@ -25,7 +25,6 @@ void sig_pipe_handler(int signo){
 
 int main(int argc, const char * argv[]) {
    
-    //Cuma_Server의 shared_ptr를 제공함
     Cuma_Server serv_sck;
     
     
