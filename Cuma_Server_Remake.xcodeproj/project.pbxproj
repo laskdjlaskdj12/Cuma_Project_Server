@@ -12,6 +12,7 @@
 		50CBD8191E2155B600DA8387 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50CBD8171E2155B600DA8387 /* Log.cpp */; };
 		50DD99671DE818E00053B530 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99661DE818E00053B530 /* main.cpp */; };
 		50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD996D1DE818F30053B530 /* Cuma_socket.cpp */; };
+		50E72B191E2374C800086A66 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E72B171E2373FF00086A66 /* libboost_signals.a */; };
 		50F6C8491E1D496600DE8C47 /* Cuma_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50F6C8471E1D496600DE8C47 /* Cuma_client.cpp */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		50DD99661DE818E00053B530 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		50DD996D1DE818F30053B530 /* Cuma_socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_socket.cpp; sourceTree = "<group>"; };
 		50DD996E1DE818F30053B530 /* Cuma_socket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_socket.hpp; sourceTree = "<group>"; };
+		50E72B171E2373FF00086A66 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_signals.a; path = ../../../../boost_1_62_0/lib/libboost_signals.a; sourceTree = "<group>"; };
 		50F6C8471E1D496600DE8C47 /* Cuma_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_client.cpp; sourceTree = "<group>"; };
 		50F6C8481E1D496600DE8C47 /* Cuma_client.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_client.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -47,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50E72B191E2374C800086A66 /* libboost_signals.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +68,7 @@
 		50CBD8161E2155A000DA8387 /* Log */ = {
 			isa = PBXGroup;
 			children = (
+				50CBD8151E1F2F9200DA8387 /* Log_text.hpp */,
 				50CBD8171E2155B600DA8387 /* Log.cpp */,
 				50CBD8181E2155B600DA8387 /* Log.hpp */,
 			);
@@ -77,6 +81,7 @@
 				50DD99761DE84B250053B530 /* Json_cpp */,
 				50DD99651DE818E00053B530 /* Cuma_Server_Remake */,
 				50DD99641DE818E00053B530 /* Products */,
+				50E72B161E2373FF00086A66 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,10 +98,9 @@
 			children = (
 				50CBD8161E2155A000DA8387 /* Log */,
 				50DD99661DE818E00053B530 /* main.cpp */,
-				50F6C84A1E1D4A2600DE8C47 /* Cuma_socket */,
-				50F6C8461E1D494B00DE8C47 /* Client */,
+				50F6C84A1E1D4A2600DE8C47 /* Socket_obj */,
+				50F6C8461E1D494B00DE8C47 /* Client_obj */,
 				505C0F421DF2CF8700384903 /* Cuma_Server */,
-				50CBD8151E1F2F9200DA8387 /* Log_text.hpp */,
 			);
 			path = Cuma_Server_Remake;
 			sourceTree = "<group>";
@@ -109,22 +113,30 @@
 			name = Json_cpp;
 			sourceTree = "<group>";
 		};
-		50F6C8461E1D494B00DE8C47 /* Client */ = {
+		50E72B161E2373FF00086A66 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				50E72B171E2373FF00086A66 /* libboost_signals.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		50F6C8461E1D494B00DE8C47 /* Client_obj */ = {
 			isa = PBXGroup;
 			children = (
 				50F6C8471E1D496600DE8C47 /* Cuma_client.cpp */,
 				50F6C8481E1D496600DE8C47 /* Cuma_client.hpp */,
 			);
-			name = Client;
+			name = Client_obj;
 			sourceTree = "<group>";
 		};
-		50F6C84A1E1D4A2600DE8C47 /* Cuma_socket */ = {
+		50F6C84A1E1D4A2600DE8C47 /* Socket_obj */ = {
 			isa = PBXGroup;
 			children = (
 				50DD996E1DE818F30053B530 /* Cuma_socket.hpp */,
 				50DD996D1DE818F30053B530 /* Cuma_socket.cpp */,
 			);
-			name = Cuma_socket;
+			name = Socket_obj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -289,7 +301,11 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEVELOPMENT_TEAM = 2A9X84KH8Y;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../../../xcode/jsoncpp-master/dist\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../../xcode/jsoncpp-master/dist\"",
+					/Users/ace/boost_1_62_0/include,
+				);
+				LIBRARY_SEARCH_PATHS = /Users/ace/boost_1_62_0/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -299,7 +315,11 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEVELOPMENT_TEAM = 2A9X84KH8Y;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../../../xcode/jsoncpp-master/dist\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../../xcode/jsoncpp-master/dist\"",
+					/Users/ace/boost_1_62_0/include,
+				);
+				LIBRARY_SEARCH_PATHS = /Users/ace/boost_1_62_0/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

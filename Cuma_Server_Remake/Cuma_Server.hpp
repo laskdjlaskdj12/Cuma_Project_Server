@@ -25,7 +25,22 @@
 #include "Cuma_socket.hpp"
 #include "Cuma_client.hpp"
 
-//sigslot을 할당
+//boost의 sigslot
+#ifdef sigslot_active_
+#include <boost/signals.hpp>
+#include <boost/signals/slot.hpp>
+#include <boost/signals/connection.hpp>
+#include <boost/signals/trackable.hpp>
+#include <boost/bind.hpp>
+#endif
+
+//로그 출력을 import
+#include "Log.hpp"
+#include "Log_text.hpp"
+
+
+
+
 
 
 #define READ_BINARY 1
@@ -40,6 +55,14 @@ using std::ofstream;
 using std::ifstream;
 using std::make_shared;
 using std::vector;
+
+#ifdef sigslot_active_ 
+typedef boost::signal<void ()> Sig_void;
+typedef boost::signal<void (int) > Sig_int;
+typedef boost::signal<void (int, bool)> Sig_int_bool;
+#endif
+
+
 
 //클라이언트의 접속이 있었을 경우에 Cuma_server에서 클라이언트의 obj를 할당하고
 //클라이언트 obj의 req를 파악해서 배분하는 코어 역활을 함
@@ -102,8 +125,6 @@ private:
     //Client의 연결이 종료가 되었을때 연결 종료를 해주는 함수
     void Close_Cli(shared_ptr<Client>& C);
     
-    void Dalloc_cli();
-    
 private:
 //========= 디바이스 로컬 영역 ==============
     
@@ -155,6 +176,8 @@ private:
     Json::Reader read;
     Json::Value val;
     
+    //============ 로그 ==================
+    _CS_Log log;
 };
 
 #endif /* Cuma_Server_hpp */

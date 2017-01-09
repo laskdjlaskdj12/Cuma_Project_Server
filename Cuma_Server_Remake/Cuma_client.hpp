@@ -18,6 +18,11 @@
 #include "Cuma_socket.hpp"
 
 
+#include "Log.hpp"
+#include "Log_text.hpp"
+
+
+
 using std::string;
 using std::list;
 using std::stringstream;
@@ -144,6 +149,9 @@ private:
     std::thread T_id_;
     
     bool start;
+    
+    //========= 로그 영역 ============
+    _CS_Log log;
     
 };
 

@@ -14,9 +14,9 @@ using std::string;
 
 class _CS_Log{
 public:
-    void operator()(const string s);
-    void operator()(const string s, bool b);
-    void operator()(const string s, unsigned long long l);
+    void operator()(const string& s);
+    void operator()(const string& s, bool b);
+    void operator()(const string& s, unsigned long long l);
     
     
     

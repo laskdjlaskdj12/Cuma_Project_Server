@@ -57,25 +57,29 @@ void Cuma_Server::start(){
        
         //소켓을 Cuma_Sck클래스에서 구성
         cuma_sck->start();
+        log(CS_START,true);
         
         
-        // 클라이언트 소켓의 kqueue의 리턴값을 저장할 temp를 만듬
-        int nev;
+        
         
         //서버소켓에 kqueue를 등록
         EV_SET((&*CS_srv_kevent), (&*cuma_sck->get_Serv_Sock())->get_sck(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+        log(CS_EV_SET,true);
+        
         
         //클라이언트가 connect 될때가지 listen
         listen(cuma_sck->get_Serv_Sock()->get_sck(),128);
+        log(CS_EV_LST,true);
         
         
         //만약 is_start == true
         while(is_start){
             
-            nev = kevent(S_srv_kq,
+            int nev = kevent(S_srv_kq,
                          (&* CS_srv_kevent), 1,
                          (&* CS_srv_kevent_t), 1,
                          NULL);
+            log(CS_KEVENT,true);
             
             
             
@@ -107,6 +111,8 @@ void Cuma_Server::start(){
                     Client_temp->get_cli_sck_info()->sck = accept(cuma_sck->get_Serv_Sock()->get_sck(),
                                                                   (sockaddr*)&(Client_temp->get_cli_sck_info()->cli_sck_addr),
                                                                   (socklen_t*)&(Client_temp->get_cli_sck_info()->siz));
+                    log(CS_ACCEPT,true);
+                    
                     
                     //만약 128개의 사이즈가 넘었다면 큐 부족으로 connect false리턴
                     if(c_list.size() > 128){
@@ -128,7 +134,7 @@ void Cuma_Server::start(){
                         //Client object reset
                         Client_temp.reset();
                         ERR.clear();
-                        
+                        log(CS_QUEUE_FULL,true);
                         
                         //만약 중복 재접속 했을 경우
                     }else if(std::find(Cli_des.begin(),
@@ -152,7 +158,7 @@ void Cuma_Server::start(){
                         //Client object reset
                         Client_temp.reset();
                         ERR.clear();
-                        
+                        log(CS_QUEUE_DUP,true);
                         
                         
                         //정상적인 접속일 경우
@@ -161,10 +167,12 @@ void Cuma_Server::start(){
                         //정상코드를 클라이언트에게 전송
                         Json::Value CON;
                         CON["RCV_CLR"] = "CONNECT_CLEAR";
+                        log(CS_JSON_RCV_CLR,true);
                         
                         snd_val(Client_temp, CON);
                         
                         auto thread_t = std::thread(&Cuma_Server::Start_Cli, this,Client_temp);
+                        log(CS_THREAD_ALLOC,true);
                         
                         //클라이언트 객체제 할당된 쓰레드 insert
                         Client_temp->set_thread_id(move(thread_t));
@@ -187,8 +195,8 @@ void Cuma_Server::start(){
                         CON.clear();
                         
                         //만약 t_j_list가  5이상 되면 join을 함
-                        if(t_j_list_.size() >5 ){
-                            
+                        if(t_j_list_.size() > 5 ){
+                            log(CS_THREAD_FLUSH,true);
                             //delete thread
                             delete_thread();
                             
@@ -201,6 +209,7 @@ void Cuma_Server::start(){
         
         //만약 is_start 가 false가 되었을 경우 cuma_sck->get_Serv_Sock()의 stop으로 넘어감
         stop();
+        log(CS_STOP,true);
         
     }catch(std::exception& e){
         std::cout<<"[Error] : Error res"<<e.what()<<std::endl;
@@ -350,10 +359,11 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         //클라이언트에서 전송한 recv를 받음
         rcv_val(cli);
+        log(CS_START_RCV);
         
         //val_tmp로 클라이언트로부터 수신을 받음
         Json::Value val_tmp = cli->get_json();
-        
+        log(CS_START_SET_CLI_OBJ);
         
         //클라이언트 객체의 파일 설정
         cli->set_f_name(val_tmp["F_name"].asString());
@@ -369,15 +379,18 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
                 if(r_binary(cli) < 0){
                     throw string("NOFILE");
                 }
+                log(CS_START_READ_BINARY);
                 break;
                 
             case WRITE_BINARY:     //파일 write일시
                 if(w_binary(cli) < 0){
                     throw string("NOWRIGHT");
                 }
+                log(CS_START_WRITE_BINARY);
                 break;
                 
             default:    //파일모드가 잘못되었을시
+                log(CS_START_WRONG_MOD);
                 throw string("Wrong_MODE");
                 break;
         }
@@ -389,14 +402,18 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         //파일 이름, 크기, 바이너리 추가
         val_tmp["F_name"] = cli->get_f_name();
         val_tmp["F_siz"] = (u_int64_t)cli->get_f_siz();
+        log(CS_START_ADD_JSON);
         
         //val_tmp를 전송함
         snd_val(cli, val_tmp);
+        log(CS_START_SND);
         
         val_tmp.clear();
+        log(CS_START_JSON_CLR);
         
         //클라이언트 접속 connect 셧다운
         Close_Cli(cli);
+        log(CS_START_CLOSE_CLI);
         
         return true;
         
@@ -476,33 +493,25 @@ void Cuma_Server::Close_Cli(shared_ptr<Client>& c){
     thr_lst_lck_.lock();
     //해당 스레드 인스턴스를 pushback
     t_j_list_.push_back(move(c->get_thread_id()));
+    log(CS_CLOSE,true);
     thr_lst_lck_.unlock();
     
     
     //큐에 등록된 Client_list, Cliet_sck_info를 remove 함
     c_list.remove(c);
     Cli_des.remove(c->get_cli_sck_info()->sck);
+    log(CS_CLOSE_REM_SCK);
     
     
     //해당 소켓 디스크립터를 shutdown함
     c->stop();
+    log(CS_CLOSE_SCK_STOP);
+    
     
     //Client의 객체를 소멸시키기
     std::cout<<"참조 타임 : "<<c.use_count()<<std::endl;
     c.reset();
     std::cout<<"참조 타임 : "<<c.use_count()<<std::endl;
-}
-
-void Cuma_Server::Dalloc_cli(){
-    
-    while(is_start){
-        
-        for(std::list<std::__1::shared_ptr<Client>>::iterator it = c_list.begin(); it != c_list.end(); it++){
-            
-        }
-        
-        sleep(1);
-    }
 }
 
 

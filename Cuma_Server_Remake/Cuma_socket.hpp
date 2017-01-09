@@ -68,6 +68,11 @@
 //시스템 에러 exception 리턴
 #include <system_error>
 
+//로그 import
+#include "Log.hpp"
+#include "Log_text.hpp"
+
+
 using std::string;
 using std::list;
 using std::shared_ptr;
@@ -165,6 +170,8 @@ private:
     int serv_kq_;
     
     sockaddr_in srv_sck_addr_;
+    
+    _CS_Log log;
     
 };
 

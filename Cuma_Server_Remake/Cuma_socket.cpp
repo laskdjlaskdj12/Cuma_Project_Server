@@ -70,17 +70,26 @@ void Serv_Sck::set_lst(int siz){
 Cuma_Sck::Cuma_Sck(){
     try{
         serv_sock_ = make_shared<Serv_Sck>();
+        log(serv_sck_init,true);
         
         serv_kq_ = kqueue();
+        
         if(serv_kq_ == -1){
             throw errno;
         }
+        log(serv_sck_init_kqueue_func, true);
+        
+        
         
         serv_kqueue_ = make_shared<struct kevent>();
         serv_kqueue_t_= std::__1::make_shared<struct kevent>();
+        log(serv_sck_init_kqueue,true);
+        log(serv_sck_init_kqueue_t,true);
+        
         
         //소켓 할당
         serv_sock_->set_sock(socket(PF_INET,SOCK_STREAM,0));
+        log(serv_sck_init_socket,true);
         
     }catch(std::system_error& e){
         std::cout<<"[Error] : Cuma_Sck "<<e.what()<<std::endl;
@@ -107,12 +116,15 @@ void Cuma_Sck::start(){
     srv_sck_addr_.sin_family = AF_INET;
     srv_sck_addr_.sin_addr.s_addr = inet_addr(serv_sock_->get_addr());
     srv_sck_addr_.sin_port = htons(serv_sock_->get_prt());
-    
+    log(serv_sck_init_sockaddr_in,true);
     
     int bind_wait = 1;
     setsockopt(serv_sock_->get_sck(), SOL_SOCKET, SO_REUSEADDR,&bind_wait , sizeof(int));
+    log(serv_sck_setsockopt,true);
     
     bind(serv_sock_->get_sck(), (sockaddr*)&srv_sck_addr_, sizeof(sockaddr));
+    log(serv_sck_bind,true);
+    
 }
 
 //서버 deacitve
