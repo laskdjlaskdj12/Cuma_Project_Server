@@ -56,7 +56,7 @@ using std::ifstream;
 using std::make_shared;
 using std::vector;
 
-#ifdef sigslot_active_ 
+#ifdef sigslot_active_
 typedef boost::signal<void ()> Sig_void;
 typedef boost::signal<void (int) > Sig_int;
 typedef boost::signal<void (int, bool)> Sig_int_bool;
@@ -180,4 +180,9 @@ private:
     _CS_Log log;
 };
 
+/*class Cuma_Thread{
+public:
+    Cuma_Thread();
+    ~Cuma_Thread();
+};*/
 #endif /* Cuma_Server_hpp */

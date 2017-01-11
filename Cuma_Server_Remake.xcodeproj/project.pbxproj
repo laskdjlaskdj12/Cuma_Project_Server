@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		503127071E0C1F4800AF11B7 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 503127061E0C1F4800AF11B7 /* jsoncpp.cpp */; };
+		5032FD4A1E24EE13009ACB5D /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E72B171E2373FF00086A66 /* libboost_signals.a */; };
 		50A2BC4B1E01C620002DBD12 /* Cuma_Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */; };
 		50CBD8191E2155B600DA8387 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50CBD8171E2155B600DA8387 /* Log.cpp */; };
 		50DD99671DE818E00053B530 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD99661DE818E00053B530 /* main.cpp */; };
 		50DD996F1DE818F30053B530 /* Cuma_socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DD996D1DE818F30053B530 /* Cuma_socket.cpp */; };
-		50E72B191E2374C800086A66 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E72B171E2373FF00086A66 /* libboost_signals.a */; };
 		50F6C8491E1D496600DE8C47 /* Cuma_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50F6C8471E1D496600DE8C47 /* Cuma_client.cpp */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		503127061E0C1F4800AF11B7 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsoncpp.cpp; path = "../../../../xcode/jsoncpp-master/dist/jsoncpp.cpp"; sourceTree = "<group>"; };
+		503B82521E24AC8A0030FA70 /* libboost_signals.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_signals.dylib; path = ../../../../boost_1_62_0/lib/libboost_signals.dylib; sourceTree = "<group>"; };
 		50A2BC491E01C620002DBD12 /* Cuma_Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cuma_Server.cpp; sourceTree = "<group>"; };
 		50A2BC4A1E01C620002DBD12 /* Cuma_Server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cuma_Server.hpp; sourceTree = "<group>"; };
 		50CBD8151E1F2F9200DA8387 /* Log_text.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Log_text.hpp; sourceTree = "<group>"; };
@@ -49,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50E72B191E2374C800086A66 /* libboost_signals.a in Frameworks */,
+				5032FD4A1E24EE13009ACB5D /* libboost_signals.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +117,7 @@
 		50E72B161E2373FF00086A66 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				503B82521E24AC8A0030FA70 /* libboost_signals.dylib */,
 				50E72B171E2373FF00086A66 /* libboost_signals.a */,
 			);
 			name = Frameworks;

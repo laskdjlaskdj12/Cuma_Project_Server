@@ -190,12 +190,13 @@ void Cuma_Server::start(){
                         std::cout<<"cli_tmp use_count : "<<Client_temp->get_cli_sck_info().use_count()<<std::endl;
                         std::cout<<"Client_temp use_count : "<<Client_temp.use_count()<<std::endl;
                         
+                        std::cout<<"t_f_list_siz : "<<t_j_list_.size()<<std::endl;
                         
                         Client_temp.reset();
                         CON.clear();
                         
                         //만약 t_j_list가  5이상 되면 join을 함
-                        if(t_j_list_.size() > 5 ){
+                        if(t_j_list_.size() > 1 ){
                             log(CS_THREAD_FLUSH,true);
                             //delete thread
                             delete_thread();

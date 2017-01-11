@@ -42,7 +42,8 @@
 #define CS_START_SND            "CS_START_SND"
 #define CS_START_CLOSE_CLI      "CS_START_CLOSE_CLI"
 
-#define CS_CLOSE    "CS_STOP_push_thr_id"
+#define CS_CLOSE            "CS_STOP_push_thr_id"
 #define CS_CLOSE_REM_SCK    "CS_STOP_REMOVE_sck_des"
 #define CS_CLOSE_SCK_STOP   "CS_STOP_SCK_STOP"
+
 #endif /* Log_text */

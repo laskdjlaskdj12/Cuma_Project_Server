@@ -41,7 +41,7 @@ int main(int argc, const char * argv[]) {
     
     
     //포트설정
-    serv_sck.set_prt(33391);
+    serv_sck.set_prt(33393);
     serv_sck.set_active(true);
     
     
