@@ -171,6 +171,8 @@ void Cuma_Server::start(){
                         
                         snd_val(Client_temp, CON);
                         
+                        
+                        //접속된 클라이언트를 실행할 쓰레드 할당
                         auto thread_t = std::thread(&Cuma_Server::Start_Cli, this,Client_temp);
                         log(CS_THREAD_ALLOC,true);
                         
@@ -263,8 +265,8 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
         //리턴할 string의 크기를 f_temp에 지정함
         string f_temp;
         
-        //파일을 읽어서 string으로 리턴을 함
-        f_read.open(name,std::ios::binary);
+        //프레임 파일을 읽어서 string으로 리턴을 함    (파일이름 : 파일.Cuma_Client(프레임 숫자))
+        f_read.open(name+".Cuma_Client"+std::to_string(c->get_f_frame()),std::ios::binary);
         
         
         //만약 파일이 존재하지 않는다면
@@ -272,6 +274,8 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
             throw string("FILE_NOT_EXSIST");
         }
         
+        //파일의 포인터를 마지막으로 옮김
+        f_read.seekg(std::ios::beg,std::ios::end);
         
         //streampos으로 file_read의 크기를 구함
         std::streampos f_siz = f_read.tellg();
@@ -366,34 +370,87 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         Json::Value val_tmp = cli->get_json();
         log(CS_START_SET_CLI_OBJ);
         
-        //클라이언트 객체의 파일 설정
-        cli->set_f_name(val_tmp["F_name"].asString());
-        cli->set_f_siz(val_tmp["F_siz"].asLargestUInt());
-        cli->set_file(val_tmp["F_binary"].asString());
-        cli->set_f_frame(val_tmp["F_frame_num"].asUInt64());
+        //만약 클라이언트가 서버 상태 체크하는 접속시
+        if(val_tmp["Active"].asBool() != false || !val_tmp["Active"].isNull()){
+            val_tmp["Active"] = true;
+            
+            //val_tmp를 전송함
+            snd_val(cli, val_tmp);
+            log(CS_START_SND);
+            
+            val_tmp.clear();
+            log(CS_START_JSON_CLR);
+            
+            //클라이언트 접속 connect 셧다운
+            Close_Cli(cli);
+            log(CS_START_CLOSE_CLI);
+            
+            return true;
+        }
         
         
-        //오브젝트 모드 확인
+        
+        //클라이언트에서 요청한 모드 확인
         switch (val_tmp["MODE"].asInt()){
                 
-            case READ_BINARY:     //파일 read일시
+            case READ_BINARY:{              //파일 참조 요청일시
+                
+                cli->set_f_name(val_tmp["F_name"].asString());
+                cli->set_f_frame(val_tmp["F_frame_num"].asUInt64());
+                
+                //바이너리 읽기
                 if(r_binary(cli) < 0){
                     throw string("NOFILE");
                 }
                 log(CS_START_READ_BINARY);
-                break;
                 
-            case WRITE_BINARY:     //파일 write일시
+                //인덱스 json을 clear
+                val_tmp.clear();
+                
+                //파일 이름, 크기, 바이너리 추가
+                val_tmp["F_name"] = cli->get_f_name();
+                val_tmp["F_siz"] = (Json::UInt64)cli->get_f_siz();
+                val_tmp["F_frame_num"] = cli->get_f_frame();
+                val_tmp["F_binary"] = cli->get_file();
+                log(CS_START_ADD_JSON);
+                
+                
+                break;
+            }
+                
+            case WRITE_BINARY:{             //파일 저장 요청일시
+                
+                //클라이언트 객체의 파일 설정
+                cli->set_f_name(val_tmp["F_name"].asString());
+                cli->set_f_siz(val_tmp["F_siz"].asLargestUInt());
+                cli->set_file(val_tmp["F_binary"].asString());
+                cli->set_f_frame(val_tmp["F_frame_num"].asUInt64());
+                
+                //바이너리 쓰기
                 if(w_binary(cli) < 0){
                     throw string("NOWRIGHT");
                 }
                 log(CS_START_WRITE_BINARY);
-                break;
                 
-            default:    //파일모드가 잘못되었을시
+                //인덱스 json을 clear
+                val_tmp.clear();
+                
+                //파일 이름, 크기, 바이너리 추가
+                val_tmp["F_name"] = cli->get_f_name();
+                val_tmp["F_siz"] = (Json::UInt64)cli->get_f_siz();
+                val_tmp["F_frame_num"] = cli->get_f_frame();
+                log(CS_START_ADD_JSON);
+                
+                
+                
+                break;
+            }
+                
+            default:{    //파일모드가 잘못되었을시
                 log(CS_START_WRONG_MOD);
                 throw string("Wrong_MODE");
                 break;
+            }
         }
         
         //val_tmp의 버퍼를 clear함
@@ -402,7 +459,8 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         //파일 이름, 크기, 바이너리 추가
         val_tmp["F_name"] = cli->get_f_name();
-        val_tmp["F_siz"] = (u_int64_t)cli->get_f_siz();
+        val_tmp["F_siz"] = (Json::UInt64)cli->get_f_siz();
+        val_tmp["F_frame_num"] = cli->get_f_frame();
         log(CS_START_ADD_JSON);
         
         //val_tmp를 전송함
@@ -466,7 +524,7 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
     }catch(const std::string& e){
         Json::Value snd_err;
-        std::cout<<"[Error] : Error of"<<e<<std::endl;
+        std::cout<<"[Error] : Error of "<<e<<std::endl;
         
         //클라이언트에게 exception이 났다고 전달을 함
         
