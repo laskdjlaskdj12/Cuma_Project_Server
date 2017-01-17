@@ -266,7 +266,7 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
         string f_temp;
         
         //프레임 파일을 읽어서 string으로 리턴을 함    (파일이름 : 파일.Cuma_Client(프레임 숫자))
-        f_read.open(name+".Cuma_Client"+std::to_string(c->get_f_frame()),std::ios::binary);
+        f_read.open(name+".Cuma_Client"+std::to_string(c->get_f_frame()),std::ios::binary | std::ios::beg);
         
         
         //만약 파일이 존재하지 않는다면
@@ -278,23 +278,30 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
         f_read.seekg(std::ios::beg,std::ios::end);
         
         //streampos으로 file_read의 크기를 구함
-        std::streampos f_siz = f_read.tellg();
+        size_t f_siz = f_read.tellg();
         
+        //파일의 포인터를 제자리로 돌려둠
+        f_read.seekg(std::ios::beg);
         
         //Client 파라미터에 파일 사이즈를 등록
         c->set_f_siz(f_siz);
         
         
         //file_buf로 new char[]을 할당
-        char* file_buf = new char[f_siz];
+        char* file_buf = new char[512];
         
         
         //file_read로 읽음
-        f_read.read(file_buf, f_siz);
+        while(!f_read.eof()){
+            
+            f_read.read(file_buf, 512);
+            f_temp.append(file_buf, 512);
+            memset(file_buf,0,512);
+            
+        }
         
         
         //리턴할 string에 해당 파일 크기 만큼 바이너리를 input
-        f_temp.append(file_buf, f_siz);
         
         
         //file_buf는 메모리에서 삭제
@@ -327,12 +334,15 @@ int Cuma_Server::w_binary(const shared_ptr<Client>& c){
         std::string name = c->get_f_name();
         std::string binary = c->get_file();
         unsigned long byte = c->get_f_siz();
-        
+        std::stringstream f_name;
         //뮤텍스 lock을 함
         mtx_lock.lock();
         
+        //파일 이름을 (파일이름)+(.Cuma_Client)+(프레임넘버)
+        f_name<<name<<".Cuma_Client"<<std::to_string(c->get_f_frame());
+        
         //파일 쓰기(바이너리로 파일을 오픈)
-        file_write.open(name,std::ios::binary);
+        file_write.open(f_name.str(),std::ios::binary | std::ios::beg);
         
         
         //파일을 입력하기
@@ -396,7 +406,7 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
             case READ_BINARY:{              //파일 참조 요청일시
                 
                 cli->set_f_name(val_tmp["F_name"].asString());
-                cli->set_f_frame(val_tmp["F_frame_num"].asUInt64());
+                cli->set_f_frame(val_tmp["F_frame_num"].asInt());
                 
                 //바이너리 읽기
                 if(r_binary(cli) < 0){
@@ -453,16 +463,6 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
             }
         }
         
-        //val_tmp의 버퍼를 clear함
-        val_tmp.clear();
-        
-        
-        //파일 이름, 크기, 바이너리 추가
-        val_tmp["F_name"] = cli->get_f_name();
-        val_tmp["F_siz"] = (Json::UInt64)cli->get_f_siz();
-        val_tmp["F_frame_num"] = cli->get_f_frame();
-        log(CS_START_ADD_JSON);
-        
         //val_tmp를 전송함
         snd_val(cli, val_tmp);
         log(CS_START_SND);
@@ -508,7 +508,7 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         //클라이언트에게 exception이 났다고 전달을 함
         
-        snd_err["error"] = "JSON_EXCEP";
+        snd_err["Error"] = "JSON_EXCEP";
         snd_err["Reason"] = e.what();
         
         //클라이언트로 전송
@@ -528,7 +528,7 @@ bool Cuma_Server::Start_Cli(shared_ptr<Client> cli){
         
         //클라이언트에게 exception이 났다고 전달을 함
         
-        snd_err["error"] = "Client";
+        snd_err["Error"] = "Client";
         snd_err["Reason"] = e;
         
         //클라이언트로 전송

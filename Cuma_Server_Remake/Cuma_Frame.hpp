@@ -29,6 +29,9 @@ public:
     string              f_name();           //파일 이름
     unsigned int        fr_num();           //프레임 넘버
     Json::Value         fr_json();          //프레임 json
+    int                 fr_MOD();
+    char*               fr_addr();
+    int                 fr_prt();
     
     void  set_fr_siz(unsigned long long l);
     void  set_fr_binary(string s);
@@ -36,13 +39,26 @@ public:
     void  set_f_name(string s);
     void  set_fr_num(unsigned int num);
     void  set_fr_json(Json::Value v);
+    void  set_fr_MOD(int n);
+    void  set_fr_addr(char* a);
+    void  set_fr_prt(int p);
+    
+    Json::Value to_json();
+    
+    void json_to_mem();
+    
 private:
     unsigned long long  fr_siz_;                 //프레임 사이즈
     string              fr_binary_;              //프레임 바이너리
     string              fr_name_;                //프레임 이름
     string              f_name_;                 //파일 이름
     unsigned int        fr_num_;                 //프레임 넘버
-    Json::Value         fr_json_;                 //프레임 json
+    Json::Value         fr_json_;                //프레임 json
+    int                 fr_MOD_;                 //프레임 모드
+    char*               fr_addr_;                //프레임 주소
+    int                 fr_prt_;                 //프레임 포트
 };
+
+
 
 #endif /* Cuma_Frame_hpp */

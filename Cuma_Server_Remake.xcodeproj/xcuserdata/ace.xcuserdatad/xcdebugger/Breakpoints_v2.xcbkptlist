@@ -24,11 +24,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
-            timestampString = "506151985.619422"
+            timestampString = "506322816.781828"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "418"
-            endingLineNumber = "418"
+            startingLineNumber = "422"
+            endingLineNumber = "422"
             landmarkName = "Cuma_Server::Start_Cli(shared_ptr&lt;Client&gt; cli)"
             landmarkType = "7">
             <Locations>
@@ -200,11 +200,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
-            timestampString = "506151716.421293"
+            timestampString = "506322816.781828"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "349"
-            endingLineNumber = "349"
+            startingLineNumber = "352"
+            endingLineNumber = "352"
             landmarkName = "Cuma_Server::w_binary(const shared_ptr&lt;Client&gt;&amp; c)"
             landmarkType = "7">
          </BreakpointContent>
@@ -216,11 +216,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
-            timestampString = "506151985.619422"
+            timestampString = "506325509.963864"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "562"
-            endingLineNumber = "562"
+            startingLineNumber = "550"
+            endingLineNumber = "550"
             landmarkName = "Cuma_Server::Close_Cli(shared_ptr&lt;Client&gt;&amp; c)"
             landmarkType = "7">
          </BreakpointContent>
@@ -232,11 +232,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
-            timestampString = "506151716.421293"
+            timestampString = "506322816.781828"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "358"
-            endingLineNumber = "358"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
             landmarkName = "Cuma_Server::w_binary(const shared_ptr&lt;Client&gt;&amp; c)"
             landmarkType = "7">
          </BreakpointContent>
@@ -264,11 +264,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
-            timestampString = "506151985.619422"
+            timestampString = "506325509.963864"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "519"
-            endingLineNumber = "519"
+            startingLineNumber = "507"
+            endingLineNumber = "507"
             landmarkName = "Cuma_Server::Start_Cli(shared_ptr&lt;Client&gt; cli)"
             landmarkType = "7">
          </BreakpointContent>
@@ -296,11 +296,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
-            timestampString = "506151716.421293"
+            timestampString = "506322816.781828"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "Cuma_Server::w_binary(const shared_ptr&lt;Client&gt;&amp; c)"
             landmarkType = "7">
          </BreakpointContent>
@@ -324,7 +324,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../../sigslot/sigslot.h"
@@ -335,6 +335,70 @@
             endingLineNumber = "641"
             landmarkName = "disconnect_all()"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
+            timestampString = "506322816.781828"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "Cuma_Server::w_binary(const shared_ptr&lt;Client&gt;&amp; c)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
+            timestampString = "506319695.922579"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "269"
+            endingLineNumber = "269"
+            landmarkName = "Cuma_Server::r_binary(shared_ptr&lt;Client&gt;&amp; c)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
+            timestampString = "506322816.781828"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "301"
+            endingLineNumber = "301"
+            landmarkName = "Cuma_Server::r_binary(shared_ptr&lt;Client&gt;&amp; c)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Cuma_Server_Remake/Cuma_Server.cpp"
+            timestampString = "506325509.963864"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "646"
+            endingLineNumber = "646"
+            landmarkName = "Cuma_Server::snd_val(shared_ptr&lt;Client&gt;&amp;c, Json::Value&amp; j)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
