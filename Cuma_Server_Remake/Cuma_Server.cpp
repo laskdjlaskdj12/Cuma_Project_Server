@@ -265,8 +265,12 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
         //리턴할 string의 크기를 f_temp에 지정함
         string f_temp;
         
+        //파일 전체읽을 버퍼
+        size_t f_size;
+        
+        
         //프레임 파일을 읽어서 string으로 리턴을 함    (파일이름 : 파일.Cuma_Client(프레임 숫자))
-        f_read.open(name+".Cuma_Client"+std::to_string(c->get_f_frame()),std::ios::binary | std::ios::beg);
+        f_read.open(name+".Cuma_Client"+std::to_string(c->get_f_frame()), std::ifstream::binary);
         
         
         //만약 파일이 존재하지 않는다면
@@ -274,37 +278,24 @@ int Cuma_Server::r_binary(shared_ptr<Client>& c){
             throw string("FILE_NOT_EXSIST");
         }
         
-        //파일의 포인터를 마지막으로 옮김
-        f_read.seekg(std::ios::beg,std::ios::end);
+        f_read.seekg(0,f_read.end);
+        f_size = f_read.tellg();
+        f_read.seekg(0,f_read.beg);
         
-        //streampos으로 file_read의 크기를 구함
-        size_t f_siz = f_read.tellg();
+        std::cout<<"[Debug] : size = "<<f_size<<std::endl;
         
-        //파일의 포인터를 제자리로 돌려둠
-        f_read.seekg(std::ios::beg);
-        
-        //Client 파라미터에 파일 사이즈를 등록
-        c->set_f_siz(f_siz);
-        
+        c->set_f_siz(f_size);
         
         //file_buf로 new char[]을 할당
-        char* file_buf = new char[512];
+        char* file_buf = new char[f_size];
         
-        
-        //file_read로 읽음
-        while(!f_read.eof()){
-            
-            f_read.read(file_buf, 512);
-            f_temp.append(file_buf, 512);
-            memset(file_buf,0,512);
-            
-        }
-        
+        //읽은 파일 버퍼를 char에 옮김
+        f_read.read(file_buf, f_size);
         
         //리턴할 string에 해당 파일 크기 만큼 바이너리를 input
+        f_temp.append(file_buf,f_size);
         
-        
-        //file_buf는 메모리에서 삭제
+        //file_buf, f_buff 는 메모리에서 삭제
         delete[] file_buf;
         
         //f_temp를 Client에 넣음
