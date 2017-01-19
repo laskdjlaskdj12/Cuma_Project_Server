@@ -13,7 +13,7 @@ Cuma 의 기초적인 작동 방식은 다음와 같습니다.
 ##Cuma Project
 Cluster unit memory architecture (A.K.A Cuma) is way to store file based on Multi Base Server.
 As File Send protocol, when file is requested send by Client, file splits amount of Selected Cuma_Server list count and send it direct to Server.
-Althought there is no contect any repeter server.
+Althought there is no contect of any repeter server.
 
 #Cuma_Server
 About this Source is Server prototype Source that include Basic Core functional.
