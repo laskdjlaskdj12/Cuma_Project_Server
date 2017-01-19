@@ -16,6 +16,6 @@ As File Send protocol, when file is requested send by Client, file splits amount
 Althought there is no contect any repeter server.
 
 #Cuma_Server
-About this Source is Server Core prototype Source that include Basic Core functional.
+About this Source is Server prototype Source that include Basic Core functional.
 
 CopyRight (C) 2016 laskdjlaskdj12 Allright Reserved.
