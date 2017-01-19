@@ -1,0 +1,17 @@
+language: cpp
+sudo: required
+compiler:
+  - clang++
+  
+os:
+  - osx
+
+addons:
+  apt:
+    sources:
+      - boost-latest
+    packages:
+      - libboost_signals.a
+      - libboost_signals.dylib
+      
+    
