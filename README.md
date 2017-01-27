@@ -7,8 +7,24 @@ Cuma 의 기초적인 작동 방식은 다음와 같습니다.
 파일 전송프로토콜 로서 파일을 클라이언트에서 지정된 서버의 갯수만큼 프레임을 분활시켜서 전송을 하는 방식으로 송신시 지정된 서버에 접속을 하는것 이외 
 중계노드에 접속 단계를 거치지 않습니다.
 
-#Cuma_Server
+
+##Cuma_Server
 본 소스는 Cuma 프로토콜의 서버 코어 소스로써 기본적인 코어 기능만을 포함하고 있습니다.
+
+#install Guide
+
+1. boost 패키지를 다운로드.
+    ex) wget https://sourceforge.net/projects/boost/files/boost/1.63.0/
+2. boost 패키지를 빌드합니다.
+    ex) ./boostrap.sh
+3. (2)번 과정 후 b2가 빌드가 boostreap를 b2로 빌드합니다.
+    ex) ./b2
+4. 빌드가 성공적이면 stage 디렉토리 와 boost 디렉토리 를 프로젝트 폴더에 이동시키십시오.
+    ex) mv {Boost_Directory}/stage  {Project_Directory}/
+    
+2. JsonCpp 패키지를 빌드하여 헤더파일와 소스파일을 생성합니다. ex) python amalgamate.py
+3. 생성된 Jsoncpp/dist 디렉토리를 {Cuma_Client위치}/에 옮김니다. ex) mv {Jsoncpp_location}/dist {Project_location}
+4. 끝
 
 ##Cuma Project
 Cluster unit memory architecture (A.K.A Cuma) is way to store file based on Multi Base Server.
