@@ -73,7 +73,7 @@ About this Source is Server prototype Source that include Basic Core functional.
 
 8. Build the Source Code Using Cmake.
     command: <cmake> --build . [--config <config>] [--target <target>] [-- -i]
-    ex) cmake --build .  {Install_Dir}                                  ==================> 반드시 --build 에 점이 들어가 있을것
+    ex) cmake --build .  {Install_Dir}      ==================> must have dot in front of "--build"
     
 9.  Generate execute file using "build" command in after build in (8) directory.
     ex) build 
