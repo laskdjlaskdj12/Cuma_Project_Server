@@ -22,11 +22,14 @@ Cuma 의 기초적인 작동 방식은 다음와 같습니다.
 4. 빌드가 성공적이면 stage 디렉토리 와 boost 디렉토리 를 프로젝트 폴더에 이동시키십시오.
     ex) mv {Boost_Directory}/stage  {Project_Directory}/
     
-5. JsonCpp 패키지를 다운받습니다. ex) wget https://github.com/open-source-parsers/jsoncpp
+5. JsonCpp 패키지를 다운받습니다. 
+    ex) wget https://github.com/open-source-parsers/jsoncpp
 
-6. JsonCpp 패키지를 빌드하여 헤더파일와 소스파일을 생성합니다. ex) python amalgamate.py
+6. JsonCpp 패키지를 빌드하여 헤더파일와 소스파일을 생성합니다. 
+    ex) python amalgamate.py
 
-7. 생성된 Jsoncpp/dist 디렉토리를 {Cuma_Client위치}/에 옮김니다. ex) mv {Jsoncpp_location}/dist {Project_location}
+7. 생성된 Jsoncpp/dist 디렉토리를 {Cuma_Server }/에 옮김니다. 
+    ex) mv {Jsoncpp_location}/dist {Project_location}
 
 8. 끝
 
@@ -42,10 +45,13 @@ About this Source is Server prototype Source that include Basic Core functional.
 
 1. download Boost library package
     ex) wget https://sourceforge.net/projects/boost/files/boost/1.63.0/
+    
 2. Build Boost package
     ex) ./boostrap.sh
+    
 3. after (2) sequence is end, build boostreap using b2 
     ex) ./b2
+    
 4. if the build is successful move "dirstage" directory & "boost" directory to This Project directory.
     ex) mv {Boost_Directory}/stage  {Project_Directory}/
     
