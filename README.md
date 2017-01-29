@@ -48,7 +48,7 @@ Althought there is no contect of any repeter server.
 #Cuma_Server
 About this Source is Server prototype Source that include Basic Core functional.
 
-#Insatall Guide
+#Install Guide
 
 1. download Boost library package
     ex) wget https://sourceforge.net/projects/boost/files/boost/1.63.0/
