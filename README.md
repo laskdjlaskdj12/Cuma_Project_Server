@@ -31,7 +31,14 @@ Cuma 의 기초적인 작동 방식은 다음와 같습니다.
 7. 생성된 Jsoncpp/dist 디렉토리를 {Cuma_Server }/에 옮김니다. 
     ex) mv {Jsoncpp_location}/dist {Project_location}
 
-8. 끝
+8. Cmake를 이용하여 소스코드를 빌드합니다.
+    command: <cmake> --build . [--config <config>] [--target <target>] [-- -i]
+    ex) cmake --build .  {Install_Dir}                                  ==================> 반드시 --build 에 점이 들어가 있을것
+    
+9.  (8)번에서 빌드된 디렉토리 에서 build 명령어로 실행파일을 생성합니다.
+    ex) build 
+    
+10. 끝
 
 ##Cuma Project
 Cluster unit memory architecture (A.K.A Cuma) is way to store file based on Multi Base Server.
@@ -64,6 +71,13 @@ About this Source is Server prototype Source that include Basic Core functional.
 7. move to {Project_Directory}/ after generate Jsoncpp/dist directory
    ex) mv {Jsoncpp_location}/dist {Project_location}
 
-8. done
+8. Build the Source Code Using Cmake.
+    command: <cmake> --build . [--config <config>] [--target <target>] [-- -i]
+    ex) cmake --build .  {Install_Dir}                                  ==================> 반드시 --build 에 점이 들어가 있을것
+    
+9.  Generate execute file using "build" command in after build in (8) directory.
+    ex) build 
+    
+10. done
 
 CopyRight (C) 2016 laskdjlaskdj12 Allright Reserved.
